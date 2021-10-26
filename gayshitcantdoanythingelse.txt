@@ -139,7 +139,7 @@ pcall(function() -- Main Bypassto
 				local str = tostring(args[1]):lower()
 				local strr = removespaces(str)
 				if easygatetable[strr] ~= nil then
-					local e = Players.LocalPlayer.Character.CharacterHanlder.Remotes.KeyInput
+					local e = Players.LocalPlayer.Character.CharacterHandler.Remotes.KeyInput
 					e:FireServer(Enum.KeyCode.Return, false)
 					e:FireServer(Enum.KeyCode.Slash, false)
 					for i,v in ipairs(easygatetable[strr]:split("")) do
@@ -543,7 +543,8 @@ if place == "FakeRL" then
 		LogPanel.Size = UDim2.new(0, 392, 0, 203)
 		LogPanel.ScrollBarThickness = 10
 		LogPanel.ScrollingEnabled = true
-		LogPanel.CanvasSize=UDim2.new(0,0,0,0)
+		LogPanel.CanvasSize=UDim2.new(0,0,1,0)
+		LogPanel.AutomaticCanvasSize = Enum.AutomaticSize.Y
 		LogPanel.ElasticBehavior = Enum.ElasticBehavior.WhenScrollable
 		LogPanel.LayoutOrder = 0
 		LogPanel.SizeConstraint = Enum.SizeConstraint.RelativeXY
