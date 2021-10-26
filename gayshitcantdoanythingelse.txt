@@ -11,6 +11,7 @@ _G.brightness = 0.5
 _G.timeofday = 14
 _G.autotrinket = false
 _G.easygate = false
+local logging = false
 local noclipwhenfly = false
 local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
 local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
@@ -340,6 +341,12 @@ if place ~= nil then
 		section33:addToggle("Toggle", false, function(value)
 			_G.easygate = value
 		end)
+		local section43 = spgame:addSection("Chat logger")
+		section43:addToggle("Toggle", false, function(value)
+			logging = value
+			local gui = game:GetService("CoreGui"):FindFirstChild("Chat logger")
+			gui.Enabled = value
+		end)
 	end
 end
 local miscpage = title:addPage("Misc", 1234567)
@@ -479,6 +486,11 @@ if place == "FakeRL" then
 		local plr = Players.LocalPlayer
 		local way = plr.PlayerGui:FindFirstChild(guiname).MainFrame.ScrollingFrame
 		local target = nil
+		local function spectate()
+			game:GetService("Workspace").Camera.CameraType = "Custom"
+			workspace.CurrentCamera.CFrame = Players:FindFirstChild(target).Character.HumanoidRootPart.CFrame*CFrame.new(Vector3.new(0,4,10))
+			workspace.CurrentCamera.CameraSubject = Players:FindFirstChild(target).Character.Humanoid
+		end
 		local mouse = plr:GetMouse()
 		for i,v in pairs(way:GetChildren()) do
 			v.MouseEnter:connect(function()
@@ -502,26 +514,180 @@ if place == "FakeRL" then
 			if typin then return end
 			if input.UserInputType == Enum.UserInputType.MouseButton1 and target ~= nil then
 				wait()
-				game:GetService("Workspace").Camera.CameraType = "Custom"
-				workspace.CurrentCamera.CFrame = Players:FindFirstChild(target).Character.HumanoidRootPart.CFrame*CFrame.new(Vector3.new(0,4,10))
-				workspace.CurrentCamera.CameraSubject = Players:FindFirstChild(target).Character.Humanoid
+				spectate()
 			end
 		end)
+		local ChatGui = Instance.new("ScreenGui")
+		local Frame = Instance.new("Frame")
+		local LogPanel = Instance.new("ScrollingFrame")
+		local Mini = Instance.new("TextButton")
+		local Log = Instance.new("TextButton")
+		local title = Instance.new("TextLabel")
+		ChatGui.Name = "Chat logger"
+		ChatGui.Parent = game:GetService("CoreGui")
+		ChatGui.ResetOnSpawn = false
+		ChatGui.Enabled = false
+		syn.protect_gui(ChatGui)
+		Frame.Parent = ChatGui
+		Frame.BackgroundColor3 = Color3.new(0, 0, 0)
+		Frame.BorderSizePixel = 0
+		Frame.Position = UDim2.new(0.0278396439, 0, 0.565217376, 0)
+		Frame.Size = UDim2.new(0, 392, 0, 25)
+		Frame.Active = true
+		Frame.Draggable = true
+		LogPanel.Name = "LogPanel"
+		LogPanel.Parent = Frame
+		LogPanel.BackgroundColor3 = Color3.new(0, 0, 0)
+		LogPanel.BorderColor3 = Color3.new(0.223529, 0.223529, 0.223529)
+		LogPanel.Position = UDim2.new(-0.000221580267, 0, 0.968695641, 0)
+		LogPanel.Size = UDim2.new(0, 392, 0, 203)
+		LogPanel.ScrollBarThickness = 10
+		LogPanel.ScrollingEnabled = true
+		LogPanel.CanvasSize=UDim2.new(0,0,0,0)
+		LogPanel.ElasticBehavior = Enum.ElasticBehavior.WhenScrollable
+		LogPanel.LayoutOrder = 0
+		LogPanel.SizeConstraint = Enum.SizeConstraint.RelativeXY
+		LogPanel.ZIndex = 1
+		local ull = Instance.new("UIListLayout",LogPanel)
+		ull.FillDirection = Enum.FillDirection.Vertical
+		ull.HorizontalAlignment = Enum.HorizontalAlignment.Left
+		ull.SortOrder = Enum.SortOrder.LayoutOrder
+		ull.VerticalAlignment = Enum.VerticalAlignment.Top
+		Mini.Name = "Mini"
+		Mini.Parent = Frame
+		Mini.BackgroundColor3 = Color3.new(1, 1, 1)
+		Mini.BackgroundTransparency = 1
+		Mini.Position = UDim2.new(0.823979557, 0, 0.0399999991, 0)
+		Mini.Size = UDim2.new(0, 69, 0, 24)
+		Mini.Font = Enum.Font.SourceSans
+		Mini.Text = "Minimize"
+		Mini.TextColor3 = Color3.new(1, 1, 1)
+		Mini.TextSize = 14
+		Log.Name = "Log"
+		Log.Parent = Frame
+		Log.BackgroundColor3 = Color3.new(1, 1, 1)
+		Log.BackgroundTransparency = 1
+		Log.Position = UDim2.new(0.293367326, 0, 0, 0)
+		Log.Size = UDim2.new(0, 69, 0, 24)
+		Log.Font = Enum.Font.SourceSans
+		Log.Text = "Log chat nonillus [OFF]"
+		Log.TextColor3 = Color3.new(1, 1, 1)
+		Log.TextSize = 14
+		title.Name = "title"
+		title.Parent = Frame
+		title.BackgroundColor3 = Color3.new(1, 1, 1)
+		title.BackgroundTransparency = 1
+		title.Size = UDim2.new(0, 115, 0, 24)
+		title.Font = Enum.Font.SourceSans
+		title.Text = "Chat logger"
+		title.TextColor3 = Color3.new(1, 1, 1)
+		title.TextSize = 14
+		title.TextXAlignment = Enum.TextXAlignment.Left
+		local loggingni = false
+		local minimized = false
+		Log.MouseButton1Down:Connect(function()
+			loggingni = not loggingni
+			if loggingni then Log.Text = "Log chat nonillus [ON]" else Log.Text = "Log chat nonillus [OFF]" end
+		end)
+		Mini.MouseButton1Down:Connect(function()
+			if minimized then
+				LogPanel:TweenSize(UDim2.new(0, 392, 0, 203), "InOut", "Sine", 0.5, false, nil)
+			else
+				LogPanel:TweenSize(UDim2.new(0, 392, 0, 0), "InOut", "Sine", 0.5, false, nil)
+			end
+			minimized = not minimized
+		end)
+		local prevOutputPos = 0
+		local plrnamepath = Players.LocalPlayer.PlayerGui.StatGui.Container.CharacterName
+		local function output(player, msg)
+			if player.Name == plr.Name then return end
+			local colour = Color3.fromRGB(255,255,255)
+			local illu = false
+			colour = Color3.fromRGB(255,255,255)
+			if player.Character:FindFirstChild("Observe") then
+				illu = true
+				colour = Color3.fromRGB(0,255,0)
+			end
+			if illu == true then
+				if string.sub(msg:lower(),1,1) == string.sub(plrnamepath.Text:lower(),1,1) then
+					colour = Color3.fromRGB(255,0,0)
+					notification("WARNING SOME ONE IS SPECTATING YOU")
+				end
+				if string.sub(plrnamepath.Text:lower(),1,#msg:lower()) == plrnamepath.Text:lower() then
+					colour = Color3.fromRGB(255,0,0)
+					notification("WARNING SOME ONE IS SPECTATING YOU")
+				end
+				if msg:lower():sub(1,#plrnamepath.Text) == plrnamepath.Text:lower() then
+					colour = Color3.fromRGB(255,0,0)
+					notification("WARNING SOME ONE IS SPECTATING YOU")
+				end
+			else
+				if loggingni == false then return end
+			end
+			local o = Instance.new("TextLabel",LogPanel)
+			o.Text = player.Name .. ": " .. msg
+			o.Size = UDim2.new(1,0,.1,0)
+			o.Position = UDim2.new(0,0,.007 + prevOutputPos ,0)
+			o.Font = Enum.Font.SourceSansSemibold
+			o.TextColor3 = colour
+			o.TextStrokeTransparency = 0
+			o.BackgroundTransparency = 0
+			o.BackgroundColor3 = Color3.new(0,0,0)
+			o.BorderSizePixel = 0
+			o.BorderColor3 = Color3.new(0,0,0)
+			o.FontSize = "Size14"
+			o.TextXAlignment = Enum.TextXAlignment.Left
+			o.ClipsDescendants = true
+			prevOutputPos = prevOutputPos + 0.007
+			o.MouseEnter:connect(function()
+				o.TextColor3 = Color3.fromRGB(255,255,0)
+				target = player.Name
+			end)
+			o.MouseLeave:connect(function()
+				o.TextColor3 = colour
+				if target == player.Name then
+					target = nil
+				end
+			end)
+			game.Debris:AddItem(o,5*60)
+		end
 		spawn(function()
 			for i,v in pairs(Players:GetChildren()) do
 				local a = v:GetRoleInGroup(12261660)
 				if a ~= "Member" and a ~= "Guest" then
 					notification(v.Name.." Is a "..a)
 				end
-				if v.Backpack and v.Character and v.Backpack:FindFirstChild("Observe") or v.Character:FindFirtChild("Observe") then
-					notification(v.Name.." Is a Illu")
-				end
+				v.Chatted:Connect(function(msg)
+					output(v, msg)
+				end)
 			end
 		end)
 		Players.ChildAdded:Connect(function(v)
 			local a = v:GetRoleInGroup(12261660)
 			if a ~= "Member" and a ~= "Guest" then
 				notification(v.Name.." Joined as "..a)
+			end
+			plr.Chatted:Connect(function(msg)
+				output(plr, msg)
+			end)
+		end)
+		local cur = 0
+		LogPanel.ChildAdded:Connect(function()
+			local c = LogPanel:GetChildren()
+			if cur ~= #c - 1 then
+				if LogPanel.CanvasPosition == Vector2.new(0,cur) then
+					LogPanel.CanvasPosition = Vector2.new(0,#c-1)
+				end
+				cur = #c - 1
+			end
+		end)
+		LogPanel.ChildRemoved:Connect(function()
+			local c = LogPanel:GetChildren()
+			if #cur ~= #c - 1 then
+				if LogPanel.CanvasPosition == Vector2.new(0,cur) then
+					LogPanel.CanvasPosition = Vector2.new(0,#c-1)
+				end
+				cur = #c - 1
 			end
 		end)
 		local Trinkets = {};
@@ -535,16 +701,12 @@ if place == "FakeRL" then
 				table.remove(Trinkets,b)
 			end
 		end)
-		local check = false
 		spawn(function()
 			-- Auto pickup
 			local tik = tick()
 			local RunService = game:GetService("RunService")
 			RunService.RenderStepped:Connect(function()
 				if _G.autotrinket == true then
-					if check ~= true and #Trinkets >= 2 then
-						check = true
-					end
 					for i,v in pairs(Trinkets) do
 						for i,c in pairs(v:GetChildren()) do
 							local mag = (c:FindFirstChild("ClickPart").Position - Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
