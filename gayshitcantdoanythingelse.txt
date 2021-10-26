@@ -234,7 +234,7 @@ section2:addToggle("Toggle", false, function(value)
 		Players.LocalPlayer.Character.Humanoid.JumpPower = realjp
 	end
 end)
-section2:addSlider("Adjust", 160, 120, 280, function(value)
+section2:addSlider("Adjust", 50, 120, 280, function(value)
 	_G.tujp = value + math.random(0.01,0.00000000001)
 	if _G.jp == true then
 		Players.LocalPlayer.Character.Humanoid.JumpPower = _G.tujp
