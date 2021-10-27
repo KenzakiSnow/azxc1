@@ -129,6 +129,7 @@ pcall(function() -- Main Bypassto
 		end
 		return shared.__namecall(self, ...)
 	end
+	local shortcuttab = {["1"] = "KeypadOne",["2"] = "KeypadTwo",["3"] = "KeypadThree",["4"] = "KeypadFour",["5"] = "KeypadFive",["6"] = "KeypadSix",["7"] = "KeypadSeven"}
 	if place == "FakeRL" then
 		local mt, part = getrawmetatable(game), nil
 		local old = mt.__namecall
@@ -139,14 +140,24 @@ pcall(function() -- Main Bypassto
 				local str = tostring(args[1]):lower()
 				local strr = removespaces(str)
 				if easygatetable[strr] ~= nil then
-					local e = Players.LocalPlayer.Character.CharacterHandler.Remotes.KeyInput
-					e:FireServer(Enum.KeyCode.Return, false)
-					e:FireServer(Enum.KeyCode.Slash, false)
-					for i,v in ipairs(easygatetable[strr]:split("")) do
-						e:FireServer(Enum.KeyCode[v:upper()], false)
-					end
-					e:FireServer(Enum.KeyCode.Return, false)
-					args[1] = easygatetable[strr]
+					pcall(function()
+						local e = Players.LocalPlayer.Character.CharacterHandler.Remotes.KeyInput
+						e:FireServer(Enum.KeyCode.Return, false)
+						e:FireServer(Enum.KeyCode.Slash, false)
+						for i,v in ipairs(easygatetable[strr]:split("")) do
+							if v == " " then
+								e:FireServer(Enum.KeyCode.Space, false)
+							else
+								if v == "1" or v == "2" or v == "3" or v == "4" or v == "5" or v == "6" or v == "7" and shortcuttab[tostring(v)] ~= nil then
+									e:FireServer(Enum.KeyCode[shortcuttab[tostring(v)]], false)
+								else
+									e:FireServer(Enum.KeyCode[v:upper()], false)
+								end
+							end
+						end
+						e:FireServer(Enum.KeyCode.Return, false)
+						args[1] = easygatetable[strr]
+					end)
 				end
 			end
 			return old(self, unpack(args))
@@ -234,7 +245,7 @@ section2:addToggle("Toggle", false, function(value)
 		Players.LocalPlayer.Character.Humanoid.JumpPower = realjp
 	end
 end)
-section2:addSlider("Adjust", 50, 120, 280, function(value)
+section2:addSlider("Adjust", 160, 120, 280, function(value)
 	_G.tujp = value + math.random(0.01,0.00000000001)
 	if _G.jp == true then
 		Players.LocalPlayer.Character.Humanoid.JumpPower = _G.tujp
@@ -521,6 +532,7 @@ if place == "FakeRL" then
 		local Frame = Instance.new("Frame")
 		local LogPanel = Instance.new("ScrollingFrame")
 		local Mini = Instance.new("TextButton")
+		local clear = Instance.new("TextButton")
 		local Log = Instance.new("TextButton")
 		local title = Instance.new("TextLabel")
 		ChatGui.Name = "Chat logger"
@@ -543,11 +555,11 @@ if place == "FakeRL" then
 		LogPanel.Size = UDim2.new(0, 392, 0, 203)
 		LogPanel.ScrollBarThickness = 10
 		LogPanel.ScrollingEnabled = true
-		LogPanel.CanvasSize=UDim2.new(0,0,1,0)
-		LogPanel.AutomaticCanvasSize = Enum.AutomaticSize.Y
+		LogPanel.ScrollingDirection = Enum.ScrollingDirection.XY
+		LogPanel.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
+		LogPanel.CanvasSize=UDim2.new(0,0,0,0)
 		LogPanel.ElasticBehavior = Enum.ElasticBehavior.WhenScrollable
 		LogPanel.LayoutOrder = 0
-		LogPanel.SizeConstraint = Enum.SizeConstraint.RelativeXY
 		LogPanel.ZIndex = 1
 		local ull = Instance.new("UIListLayout",LogPanel)
 		ull.FillDirection = Enum.FillDirection.Vertical
@@ -584,11 +596,28 @@ if place == "FakeRL" then
 		title.TextColor3 = Color3.new(1, 1, 1)
 		title.TextSize = 14
 		title.TextXAlignment = Enum.TextXAlignment.Left
+		clear.Name = "Clear"
+		clear.Parent = Frame
+		clear.BackgroundColor3 = Color3.new(1, 1, 1)
+		clear.BackgroundTransparency = 1
+		clear.Position = UDim2.new(0.647959173, 0, 0, 0)
+		clear.Size = UDim2.new(0, 69, 0, 24)
+		clear.Font = Enum.Font.SourceSans
+		clear.Text = "Clear Log"
+		clear.TextColor3 = Color3.new(1, 1, 1)
+		clear.TextSize = 14
 		local loggingni = false
 		local minimized = false
 		Log.MouseButton1Down:Connect(function()
 			loggingni = not loggingni
 			if loggingni then Log.Text = "Log chat nonillus [ON]" else Log.Text = "Log chat nonillus [OFF]" end
+		end)
+		clear.MouseButton1Click:Connect(function()
+			for i,v in pairs(Log:GetChildren()) do
+				if v ~= ull then
+					v:Destroy()
+				end
+			end
 		end)
 		Mini.MouseButton1Down:Connect(function()
 			if minimized then
@@ -627,7 +656,7 @@ if place == "FakeRL" then
 			end
 			local o = Instance.new("TextLabel",LogPanel)
 			o.Text = player.Name .. ": " .. msg
-			o.Size = UDim2.new(1,0,.1,0)
+			o.Size = UDim2.new(0.9,0,0,18)
 			o.Position = UDim2.new(0,0,.007 + prevOutputPos ,0)
 			o.Font = Enum.Font.SourceSansSemibold
 			o.TextColor3 = colour
@@ -646,9 +675,7 @@ if place == "FakeRL" then
 			end)
 			o.MouseLeave:connect(function()
 				o.TextColor3 = colour
-				if target == player.Name then
-					target = nil
-				end
+				target = nil
 			end)
 			game.Debris:AddItem(o,5*60)
 		end
@@ -673,24 +700,21 @@ if place == "FakeRL" then
 			end)
 		end)
 		local cur = 0
-		LogPanel.ChildAdded:Connect(function()
-			local c = LogPanel:GetChildren()
-			if cur ~= #c - 1 then
-				if LogPanel.CanvasPosition == Vector2.new(0,cur) then
-					LogPanel.CanvasPosition = Vector2.new(0,#c-1)
-				end
-				cur = #c - 1
+		local frame = LogPanel
+		local ui = ull
+		local function UpdateSize()
+			wait()
+			local cS = ui.AbsoluteContentSize
+			frame.CanvasSize = UDim2.new(0,cS.X,0,cS.Y)
+		end
+		ui:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+			if LogPanel.CanvasPosition == math.abs(ull.AbsoluteContentSize.Y - LogPanel.AbsoluteSize.Y) then
+				frame.CanvasPosition = Vector2.new(0, math.abs(ull.AbsoluteContentSize.Y - LogPanel.AbsoluteSize.Y)+18)
 			end
 		end)
-		LogPanel.ChildRemoved:Connect(function()
-			local c = LogPanel:GetChildren()
-			if #cur ~= #c - 1 then
-				if LogPanel.CanvasPosition == Vector2.new(0,cur) then
-					LogPanel.CanvasPosition = Vector2.new(0,#c-1)
-				end
-				cur = #c - 1
-			end
-		end)
+		frame.ChildAdded:Connect(UpdateSize)
+		frame.ChildRemoved:Connect(UpdateSize)
+		UpdateSize()
 		local Trinkets = {};
 		local trinketfol = workspace.MouseIgnore
 		-- Get Trinketto
