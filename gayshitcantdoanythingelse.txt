@@ -294,19 +294,21 @@ if place ~= nil then
 			local p1 = game:GetService("Workspace").OrderlyBarriers
 			local p2 = game:GetService("Workspace").Map.KillBricks
 			if val == true then
-				for i,v in pairs(p1:GetChildren()) do
-					if v:FindFirstChild("TouchInterest") then
-						if not t then t = v.TouchInterest:Clone() t.Parent = nil end
-						v.TouchInterest:Destroy()
-						table.insert(tabpar,v)
+				pcall(function()
+					for i,v in pairs(p1:GetChildren()) do
+						if v:FindFirstChild("TouchInterest") then
+							if not t then t = v.TouchInterest:Clone() end
+							v.TouchInterest:Destroy()
+							table.insert(tabpar,v)
+						end
 					end
-				end
-				for i,v in pairs(p2:GetChildren()) do
-					if v:FindFirstChild("TouchInterest") then
-						v.TouchInterest:Destroy()
-						table.insert(tabpar,v)
+					for i,v in pairs(p2:GetChildren()) do
+						if v:FindFirstChild("TouchInterest") then
+							v.TouchInterest:Destroy()
+							table.insert(tabpar,v)
+						end
 					end
-				end
+				end)
 			else
 				for i,v in pairs(tabpar) do
 					if not v:FindFirstChild("TouchInterest") and t then
