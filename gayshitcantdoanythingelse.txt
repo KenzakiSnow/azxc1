@@ -615,20 +615,6 @@ pcall(function()
 			end)
 			local prevOutputPos = 0
 			local plrnamepath = Players.LocalPlayer.PlayerGui.StatGui.Container.CharacterName
-			local illu = {}
-			local function caller(plr)
-				spawn(function()
-					repeat wait(0.1) until not Players:FindFirstChild(plr).Character:FindFirstChild("Observe")
-					illu[plr] = nil
-				end)
-			end
-			local mt = setmetatable(illu,{
-				__newindex = function(t,k,v)
-					if v == true then
-						caller(tostring(k))
-					end
-				end,
-			})
 			local function output(player, msg)
 				if player.Name == plr.Name then return end
 				local colour = Color3.fromRGB(255,255,255)
@@ -636,10 +622,6 @@ pcall(function()
 				colour = Color3.fromRGB(255,255,255)
 				if player.Character:FindFirstChild("Observe") then
 					illu = true
-					if not illu[player.Name] or illu[player.Name] == false then
-						illu[player.Name] = true
-					end
-					notification(player.Name.." Is Spectating")
 					colour = Color3.fromRGB(0,255,0)
 				end
 				if illu == true then
