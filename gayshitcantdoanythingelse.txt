@@ -448,7 +448,6 @@ pcall(function()
 		elseif KEY:lower() == 'd' then 
 			CONTROL.R = flyspeed
 		end
-		pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Track end)
 	end)
 	flyKeyUp = mouse.KeyUp:Connect(function(KEY)
 		if KEY:lower() == 'w' then
