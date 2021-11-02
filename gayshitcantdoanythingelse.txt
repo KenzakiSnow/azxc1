@@ -168,7 +168,9 @@ pcall(function()
 		TextColor = Color3.fromRGB(255, 255, 255)
 	}
 	local GUI = game:GetService("CoreGui"):FindFirstChild("Lol Exploiter :grrr: ")
-	syn.protect_gui(GUI)
+	pcall(function()
+		syn.protect_gui(GUI)
+	end)
 	local plrPage = title:addPage("Misc", 123)
 	local section1 = plrPage:addSection("Walk Speed")
 	section1:addToggle("Toggle", false, function(value)
@@ -522,7 +524,9 @@ pcall(function()
 			ChatGui.Parent = game:GetService("CoreGui")
 			ChatGui.ResetOnSpawn = false
 			ChatGui.Enabled = false
-			syn.protect_gui(ChatGui)
+			pcall(function()
+				syn.protect_gui(ChatGui)
+			end)
 			Frame.Parent = ChatGui
 			Frame.BackgroundColor3 = Color3.new(0, 0, 0)
 			Frame.BorderSizePixel = 0
