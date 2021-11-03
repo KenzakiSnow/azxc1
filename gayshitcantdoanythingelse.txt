@@ -25,7 +25,7 @@ pcall(function()
 	local realws = Players.LocalPlayer.Character.Humanoid.WalkSpeed
 	local realjp = Players.LocalPlayer.Character.Humanoid.JumpPower
 	local place = nil
-	if game.PlaceId == 7853748972 then
+	if game.PlaceId == 7853748972 or game.PlaceId == 7721054009 or game.PlaceId == 7677812047 then
 		place = "FakeRL"
 	end
 	local function notification(text)
@@ -60,9 +60,6 @@ pcall(function()
 		for i, connection in pairs(getconnections(Players.LocalPlayer.Character.HumanoidRootPart.ChildAdded)) do
 			connection:Disable()
 		end
-		game:GetService("ScriptContext").Error:Connect(function(Error)
-			notification("Nani:"..Error)
-		end)
 		for i,v in pairs(getconnections(Lighting.Changed)) do 
 			v:Disable()
 		end
