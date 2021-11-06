@@ -1,0 +1,427 @@
+local place = _G.place
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local basetab = {
+	["Thief"] = {"Agility"},
+	["Warrior"] = {"Pommel Strike", "Action Surge"},
+	["Spear"] = {"Serpent Strike", "Triple Strike"},
+}
+local supertab = {
+	["Monk"] = {"Monastic Stance"},
+	["Akuma"] = {"Spin Kick","Leg Breaker","Rising Dragon"},
+	["SIllu"] = {"Observe","Claritum","Custos"},
+	["SDruid"] = {"Verdien","Fons Vitae","Life Sense"},
+	["SNec"] = {"Reditus","Inferi","Ligans"},
+	["SSpy"] = {"Interrogation","Silverguard"},
+	["Assassin"] = {"Lethality","Bane","Triple Dagger Throw"},
+	["Dk"] = {"Spear Crusher","Dragon Blood","Dragon Roar"},
+	["Chef"] = {"Harpoon","Skewer","Hunter's Focus"},
+	["Ck"] = {"Impale","Light Piecer"},
+	["SSigil"] = {"Flame Charge","Thunder Charge","Ice Charge"},
+	["SBs"] = {"Remote Smithing","Grindstone"},
+	["Samurai"] = {"Blade Flash","Triple Slash","Flowing Counter"},
+	["Gs"] = {"Shoulder Bash"}
+}
+local ultratab = {
+	["USpy"] = {"Elegant Slash","Needle's Eye"},
+	["Dsage"] = {"Lightning Drop","Lightning Elbow"},
+	["Oni"] = {"Demon Flip","Axe Kick","Demon Step"},
+	["UIllu"] = {"Intermissum","Dominus","Globus"},
+	["UDruid"] = {"Perflora","Floresco"},
+	["UNec"] = {"Secare","Furantur","Command Monsters","Howler Summoning"},
+	["Bard"] = {"Song of Lethargy","Sweet Soothing","Joyous Dance"},
+	["Faceless"] = {"Shadow Fan","Ethereal Strike"},
+	["Shinobi"] = {"Graple","Shadowrush","Resurrection","Owl Slash"},
+	["Dslayer"] = {"Wing Soar","Thunder Spear Crash","Dragon Awakening"},
+	["UCk"] = {"Deep Sacrifice","Leviathan Plunge"},
+	["USigil"] = {"Charged Blow","Hyper Body"},
+	["Dsigil"] = {"Dark Flame Burst","Dark Eruption"},
+	["UBs"] = {"Hammer"},
+	["Ronin"] = {"Calm Mind","Swallow Reversal"},
+	["Abyss"] = {"Wrathful Leap","Abyssal Scream"}
+}
+local ubertab = {
+	["UberDsage"] = {"Thundering Leap","Seismic Toss","Electric Smite"},
+	["UberOni"] = {"Consuming Flames","Augimas","Rampage"},
+	["UberIllu"] = {"Doube","Compress","Terra Rebus"},
+	["UberDruid"] = {"Mirgeti","Krusa","Spindulys"},
+	["UberNecro"] = {"Worm Bombs","Worm Blast","Call of the Dead"},
+	["MonsterHunter"] = {"Coercere","Liber","Scribo"},
+	["UberSpy"] = {"Mana Grenade","Grenade Jump","Auto Reload","Duelist Dash","Bullseye"},
+	["UberBard"] = {"Inferno March","Galecaller's Melody","Theme of Reversal","Bad Time Symphony"},
+	["UberFaceless"] = {"Shadow Buddy","Falling Darkness","Flash of Darkness"},
+	["UberShinobi"] = {"Rising Cloud","Autumn Rain","Cruel Wind"},
+	["UberDslayer"] = {"Heroic Volley","Call Drake","Ensnaring Strike","Justice Spears"},
+	["UberCk"] = {"Tethering Lance","Void Spear","Aura of Despair","Soul Siphon"},
+	["UberSigil"] = {"Chain of Fate","Pasmarkinti","Rod of Narsa"},
+	["UberDsigil"] = {"Mirror","Chase","Hunt","Soul Burst"},
+	["UberAbyss"] = {"Spinning Soul","Deflecting Spin","Void Slicer","Great Cyclone"}
+}
+--e.e
+local options = {}
+pcall(function()
+	if isfile("tushub.json") then
+		options = game:service'HttpService':JSONDecode(readfile("tushub.json"))
+	else
+		options["Size"] = 15
+		options["YOffset"] = -5
+		options["RR"] = 5
+		options["Teams"] = {}
+		writefile("tushub.json", game:service'HttpService':JSONEncode(options))
+	end
+end)
+local function CreateInstance(cls,props)
+	local inst = Instance.new(cls)
+	for i,v in pairs(props) do
+		inst[i] = v
+	end
+	return inst
+end
+local esping = false
+local tu1 = {}
+local spfeatures = {}
+local function buttonclick(p)
+	p.BackgroundColor3 = Color3.new(255,0,0)
+	p.MouseButton1Down:Connect(function()
+		if options[p] == true then
+			options[p] = not options[p]
+			p.BackgroundColor3 = Color3.new(255,0,0)
+		else
+			options[p] = not options[p]
+			p.BackgroundColor3 = Color3.new(0,1,0)
+		end
+	end)
+end
+local dragtable = {}
+local function slidi(p,min,max)
+	dragtable[p] = false
+	p.MouseButton1Down:Connect(function()
+		dragtable[p] = true
+	end)
+	UIS.InputChanged:Connect(function()
+		if dragtable[p] then
+			local mp = UIS:GetMouseLocation() + Vector2.new(0,36)
+			local rp = mp - p.Parent.AbsoluteSize
+			local const = math.clamp(rp.X/p.Parent.AbsoluteSize.X,0,1)
+			local const2 = math.clamp(rp.X/p.Parent.AbsoluteSize.X,min,max)
+			p.Position = UDim2.new(const,0,-1.7,0)
+			options[p.Parent.Name] = const2
+		end
+	end)
+end
+local function slidi2(a,min,max)
+	a.MouseButton1Down:Connect(function()
+		local p = a:FindFirstChildOfClass("TextButton")
+		local mp = UIS:GetMouseLocation() + Vector2.new(0,36)
+		local rp = mp - p.Parent.AbsoluteSize
+		local const = math.clamp(rp.X/p.Parent.AbsoluteSize.X,0,1)
+		local const2 = math.clamp(rp.X/p.Parent.AbsoluteSize.X,min,max)
+		p.Position = UDim2.new(const,0,-1.7,0)
+		options[p.Parent.Name] = const2
+	end)
+end
+Customto = CreateInstance('ScreenGui',{DisplayOrder=0,Enabled=true,ResetOnSpawn=false,Name='Customto', Parent=game.CoreGui})
+pcall(function()
+	syn.protect_gui(Customto)
+	Customto.Enabled = true
+end)
+MainFrame = CreateInstance('Frame',{Style=Enum.FrameStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(0.345098, 0.345098, 0.345098),BackgroundTransparency=0.34999999403954,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=true,Position=UDim2.new(0.708821714, 0, 0.198529407, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 268, 0, 123),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name = 'MainFrame',Parent = Customto})
+local TextBox = CreateInstance('TextBox',{ClearTextOnFocus=true,Font=Enum.Font.PatrickHand,FontSize=Enum.FontSize.Size14,MultiLine=false,Text='',TextColor3=Color3.new(0, 0, 0), PlaceholderText='', PlaceholderColor3=Color3.new(0.7, 0.7, 0.7),TextScaled=true,TextSize=14,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=0,TextWrapped=true,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=0.5,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0, 0, 0, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 268, 0, 34),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='TextBox',Parent = MainFrame})
+local Toggle = CreateInstance('TextButton',{Font=Enum.Font.SourceSans,FontSize=Enum.FontSize.Size14,Text='Button',TextColor3=Color3.new(0, 0, 0),TextScaled=true,TextSize=14,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=0,TextWrapped=true,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,AutoButtonColor=true,Modal=false,Selected=false,Style=Enum.ButtonStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(0.0941176, 1, 0.698039),BackgroundTransparency=0.60000002384186,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=3,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0.0373134315, 0, 0.756097555, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 126, 0, 24),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='Toggle',Parent = MainFrame})
+local Menu = CreateInstance('TextButton',{Font=Enum.Font.SourceSans,FontSize=Enum.FontSize.Size14,Text='Button',TextColor3=Color3.new(0, 0, 0),TextScaled=true,TextSize=14,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=0,TextWrapped=true,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,AutoButtonColor=true,Modal=false,Selected=false,Style=Enum.ButtonStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(0.0941176, 1, 0.698039),BackgroundTransparency=0.60000002384186,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=3,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0.50746268, 0, 0.756097555, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 126, 0, 24),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='Menu',Parent = MainFrame})
+local Team = CreateInstance('TextButton',{Font=Enum.Font.SourceSans,FontSize=Enum.FontSize.Size8,Text='',TextColor3=Color3.new(0, 0, 0),TextScaled=false,TextSize=1,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=1,TextWrapped=false,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,AutoButtonColor=true,Modal=false,Selected=false,Style=Enum.ButtonStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(0, 1, 0.0666667),BackgroundTransparency=0.25,BorderColor3=Color3.new(0.207843, 0.207843, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0.0373134352, 0, 0.32520327, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 20, 0, 20),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='Team',Parent = MainFrame})
+local TextLabel = CreateInstance('TextLabel',{Font=Enum.Font.SciFi,FontSize=Enum.FontSize.Size14,Text='Team',TextColor3=Color3.new(0, 0, 0),TextScaled=true,TextSize=14,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=0.83999997377396,TextTransparency=0,TextWrapped=true,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,Active=false,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=1,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0.949999928, 0, 0.0499999523, 0),Rotation=0,Selectable=false,Size=UDim2.new(0, 57, 0, 17),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='TextLabel',Parent = Team})
+local Mob = CreateInstance('TextButton',{Font=Enum.Font.SourceSans,FontSize=Enum.FontSize.Size8,Text='',TextColor3=Color3.new(0, 0, 0),TextScaled=false,TextSize=1,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=1,TextWrapped=false,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,AutoButtonColor=true,Modal=false,Selected=false,Style=Enum.ButtonStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(0, 1, 0.0666667),BackgroundTransparency=0.25,BorderColor3=Color3.new(0.207843, 0.207843, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0.0370000005, 0, 0.540000021, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 20, 0, 20),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='Mob',Parent = MainFrame})
+local TextLabel = CreateInstance('TextLabel',{Font=Enum.Font.SciFi,FontSize=Enum.FontSize.Size14,Text='Mob',TextColor3=Color3.new(0, 0, 0),TextScaled=true,TextSize=14,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=0.83999997377396,TextTransparency=0,TextWrapped=true,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,Active=false,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=1,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0.99999994, 0, 0.0499999523, 0),Rotation=0,Selectable=false,Size=UDim2.new(0, 57, 0, 17),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='TextLabel',Parent = Mob})
+local SupportedGame = CreateInstance('Frame',{Style=Enum.FrameStyle.Custom,Active=false,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 0.976471, 0.878431),BackgroundTransparency=0.40000000596046,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(1, 0, 0, 0),Rotation=0,Selectable=false,Size=UDim2.new(0, 96, 0, 123),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name = 'SupportedGame',Parent = MainFrame})
+local TextLabel = CreateInstance('TextLabel',{Font=Enum.Font.PermanentMarker,FontSize=Enum.FontSize.Size14,Text='Extra',TextColor3=Color3.new(0, 0, 0),TextScaled=true,TextSize=14,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=0,TextWrapped=true,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,Active=false,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=0.55000001192093,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0, 0, 0.00504073454, 0),Rotation=0,Selectable=false,Size=UDim2.new(0, 96, 0, 33),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='TextLabel',Parent = SupportedGame})
+local ScrollingFrame = CreateInstance('ScrollingFrame',{BottomImage='rbxasset://textures/ui/Scroll/scroll-bottom.png',CanvasPosition=Vector2.new(0, 0),CanvasSize=UDim2.new(0, 0, 1, 0),MidImage='rbxasset://textures/ui/Scroll/scroll-middle.png',ScrollBarThickness=5,ScrollingEnabled=true,TopImage='rbxasset://textures/ui/Scroll/scroll-top.png',Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=1,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=true,Draggable=false,Position=UDim2.new(0, 0, 0.300813019, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 96, 0, 86),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='ScrollingFrame',Parent = SupportedGame})
+local UIGridLayout = CreateInstance('UIGridLayout', {CellPadding = UDim2.new(0, 10, 0, 5), CellSize = UDim2.new(0, 90, 0, 25), FillDirectionMaxCells = 0, StartCorner=Enum.StartCorner.TopLeft, FillDirection=Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Left, SortOrder = Enum.SortOrder.Name, VerticalAlignment = Enum.VerticalAlignment.Top, Name = 'UIGridLayout', Parent = ScrollingFrame })
+local Size = CreateInstance('TextButton',{Font=Enum.Font.SourceSans,FontSize=Enum.FontSize.Size8,Text='Button',TextColor3=Color3.new(0, 0, 0),TextScaled=false,TextSize=1,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=1,TextWrapped=false,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,AutoButtonColor=true,Modal=false,Selected=false,Style=Enum.ButtonStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=0.30000001192093,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0.507000029, 0, 0.68599999, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 125, 0, 4),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='Size',Parent = MainFrame})
+local TextLabel = CreateInstance('TextLabel',{Font=Enum.Font.SciFi,FontSize=Enum.FontSize.Size14,Text='Size',TextColor3=Color3.new(0, 0, 0),TextScaled=true,TextSize=14,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=0.83999997377396,TextTransparency=0,TextWrapped=true,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,Active=false,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=1,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(-0.305999994, 0, -1.70000076, 0),Rotation=0,Selectable=false,Size=UDim2.new(0, 31, 0, 17),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='TextLabel',Parent = Size})
+local SliderSize = CreateInstance('TextButton',{Font=Enum.Font.SourceSans,FontSize=Enum.FontSize.Size8,Text='',TextColor3=Color3.new(0, 0, 0),TextScaled=false,TextSize=1,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=0,TextWrapped=false,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,AutoButtonColor=true,Modal=false,Selected=false,Style=Enum.ButtonStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(0.607843, 1, 0.890196),BackgroundTransparency=0,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0, 0, -1.70000076, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 2, 0, 14),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='Slider',Parent = Size})
+local YOffset = CreateInstance('TextButton',{Font=Enum.Font.SourceSans,FontSize=Enum.FontSize.Size8,Text='Button',TextColor3=Color3.new(0, 0, 0),TextScaled=false,TextSize=1,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=1,TextWrapped=false,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,AutoButtonColor=true,Modal=false,Selected=false,Style=Enum.ButtonStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=0.30000001192093,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0.507000029, 0, 0.515999973, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 125, 0, 4),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='YOffset',Parent = MainFrame})
+local SliderYOffset = CreateInstance('TextButton',{Font=Enum.Font.SourceSans,FontSize=Enum.FontSize.Size8,Text='',TextColor3=Color3.new(0, 0, 0),TextScaled=false,TextSize=1,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=0,TextWrapped=false,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,AutoButtonColor=true,Modal=false,Selected=false,Style=Enum.ButtonStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(0.607843, 1, 0.890196),BackgroundTransparency=0,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0, 0, -1.70000076, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 2, 0, 14),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='Slider',Parent = YOffset})
+local TextLabel = CreateInstance('TextLabel',{Font=Enum.Font.SciFi,FontSize=Enum.FontSize.Size14,Text='YOffset',TextColor3=Color3.new(0, 0, 0),TextScaled=true,TextSize=14,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=0.83999997377396,TextTransparency=0,TextWrapped=true,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,Active=false,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=1,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(-0.305999994, 0, -1.70000076, 0),Rotation=0,Selectable=false,Size=UDim2.new(0, 31, 0, 17),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='TextLabel',Parent = YOffset})
+local RR = CreateInstance('TextButton',{Font=Enum.Font.SourceSans,FontSize=Enum.FontSize.Size14,Text='Button',TextColor3=Color3.new(0, 0, 0),TextScaled=false,TextSize=14,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=1,TextWrapped=false,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,AutoButtonColor=true,Modal=false,Selected=false,Style=Enum.ButtonStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=0.30000001192093,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0.507000029, 0, 0.328999996, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 125, 0, 4),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='RR',Parent = MainFrame})
+local SliderRR = CreateInstance('TextButton',{Font=Enum.Font.SourceSans,FontSize=Enum.FontSize.Size8,Text='',TextColor3=Color3.new(0, 0, 0),TextScaled=false,TextSize=1,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=0,TextWrapped=false,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,AutoButtonColor=true,Modal=false,Selected=false,Style=Enum.ButtonStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(0.607843, 1, 0.890196),BackgroundTransparency=0,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0, 0, -1.70000076, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 2, 0, 14),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='Slider',Parent = RR})
+local TextLabel = CreateInstance('TextLabel',{Font=Enum.Font.SciFi,FontSize=Enum.FontSize.Size14,Text='RR(ms)',TextColor3=Color3.new(0, 0, 0),TextScaled=true,TextSize=14,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=0.83999997377396,TextTransparency=0,TextWrapped=true,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,Active=false,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=1,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(-0.305999994, 0, -1.70000076, 0),Rotation=0,Selectable=false,Size=UDim2.new(0, 31, 0, 17),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='TextLabel',Parent = RR})
+--
+local acpthere = {"Size","YOffset","RR"}
+local ola = {
+	["Size"] = {10,18},
+	["YOffset"] = {-5,5},
+	["RR"] = {1,5},
+}
+slidi(SliderSize,10,18)
+slidi(SliderYOffset,-5,5)
+slidi(SliderRR,1,5)
+slidi2(Size,10,18)
+slidi2(YOffset,-5,5)
+slidi2(RR,1,5)
+buttonclick(Team)
+buttonclick(Mob)
+for i,v in pairs(MainFrame:GetChildren()) do
+	if v.Name == "Toggle" or v.Name == "Menu" then
+		if not options["Toggle"] then
+			if v.Name == "Toggle" then
+				v.Text = "Toggle"
+			end
+		else
+			if v.Name == "Toggle" then
+				v.Text = options["Toggle"]
+			end
+		end
+		if not options["Menu"] then
+			if v.Name == "Menu" then
+				v.Text = "Menu"
+			end
+		else
+			if v.Name == "Menu" then
+				v.Text = options["Menu"]
+			end
+		end
+		v.MouseButton1Down:Connect(function()
+			local keyinto
+			local uz = UIS.InputBegan:Connect(function(key)
+				if key.UserInputType == Enum.UserInputType.MouseButton2 or key.UserInputType == Enum.UserInputType.MouseButton1 then
+				else
+					keyinto = key.KeyCode
+				end
+			end)
+			repeat wait() until keyinto
+			uz:Disconnect()
+			v.Text = tostring(keyinto)
+			options[v.Name] = keyinto
+			writefile("tushub.json",game:service'HttpService':JSONEncode(options))
+		end)
+	end
+end
+UIS.InputBegan:Connect(function(key)
+	if key.KeyCode == options["Toggle"] then
+		esping = not esping
+	elseif key.KeyCode == options["Menu"] then
+		Customto.Enabled = not Customto.Enabled
+	end
+end)
+if place == nil then SupportedGame.Visible = false end
+local function WTS(part)
+	local screen = workspace.CurrentCamera:WorldToViewportPoint(part.Position)
+	return Vector2.new(screen.x, screen.y)
+end
+local function getclassrl(nem)
+	local p = Players:FindFirstChild(nem)
+	local curclass
+	local cur
+	for i,v in pairs(p.Backpack:GetChildren()) do
+		for k,t in pairs(basetab) do
+			if table.find(t,v.Name) then
+				cur = "Base"
+				curclass = tostring(k)
+				break
+			end
+		end
+		if cur and curclass then break end
+	end
+	if cur and curclass then
+		for i,v in pairs(p.Backpack:GetChildren()) do
+			for k,t in pairs(supertab) do
+				if table.find(t,v.Name) then
+					cur = "Super"
+					curclass = tostring(k)
+					break
+				end
+			end
+			if cur ~= "Base" then break end
+		end
+		if cur == "Super" then
+			for i,v in pairs(p.Backpack:GetChildren()) do
+				for k,t in pairs(ultratab) do
+					if table.find(t,v.Name) then
+						cur = "Ultra"
+						curclass = tostring(k)
+						break
+					end
+				end
+				if cur ~= "Super" then break end
+			end
+			if cur == "Ultra" then
+				for i,v in pairs(p.Backpack:GetChildren()) do
+					for k,t in pairs(ubertab) do
+						if table.find(t,v.Name) then
+							cur = "Uber"
+							curclass = tostring(k)
+							break
+						end
+					end
+					if cur ~= "Ultra" then break end
+				end
+			end
+		end
+	end
+	if not curclass and not cur then curclass = "Freshy" cur = "Freshy" end
+	local tabtoreturn = {
+		["Class"] = curclass,
+		["Rank"] = cur,
+	}
+	return tabtoreturn
+end
+local layer = {}
+local namelist = {}
+local function ESPText(part,color,typ)
+	local name = Drawing.new("Text")
+	local text
+	local currentlayer
+	if typ == "Name" then
+		text = part.Parent.Name
+	elseif typ == "Class" then
+		local cl = getclassrl(part.Parent.Name)
+		text = "["..string.sub(tostring(cl["Rank"]),1,1).."]" -- this is prefix lol
+		text = text.." "..cl["Class"]
+	elseif typ == "Race" then
+		text = game:GetService("Players"):FindFirstChild(part.Parent.Name).Data.Race.Value
+	end
+	if layer[part.Parent.Name] then
+		local tap = layer[part.Parent.Name]
+		table.insert(tap,typ)
+		layer[part.Parent.Name] = tap
+		currentlayer = #tap + 1
+	else
+		currentlayer = 1
+		local tao = {}
+		table.insert(tao,typ)
+		layer[part.Parent.Name] = tao
+	end
+	if currentlayer > 1 then
+		currentlayer = currentlayer - 1
+	end
+	name.Text = text
+	name.Color = color
+	name.Position = WTS(part)
+	name.Outline = true
+	name.Center = true
+	name.Visible = true
+	name.Color = color
+	table.insert(namelist,name)
+	namelist[name] = part.Parent.Name
+	spawn(function()
+		pcall(function()
+			local oldname = text
+			while true do
+				game:GetService("RunService").Heartbeat:Wait(options["RR"]/1000)
+				local y = options["YOffset"]
+				if typ == "Name" then
+					name.Text = oldname.."~["..math.floor(part.Parent:FindFirstChildOfClass("Humanoid").Health).."/"..math.floor(part.Parent:FindFirstChildOfClass("Humanoid").MaxHealth).."]".."~["..math.floor((part.Position - Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude).."]"
+				end
+				local newtext
+				if typ ~= "Name" and typ == "Class" and spfeatures["Edict"] == false and Players:FindFirstChild(part.Parent.Name).Data.Edict.Value then
+					name.Text = text.."[!]"..Players:FindFirstChild(part.Parent.Name).Data.Edict.Value.."[!]"
+				end
+				if typ == "Class" then
+					if options["Class"] then
+						if name.Visible == false then name.Visible = true end
+					else
+						if name.Visible == true then name.Visible = false end
+					end
+				end
+				if typ == "Race" then
+					if options["Race"] then
+						if name.Visible == false then name.Visible = true end
+					else
+						if name.Visible == true then name.Visible = false end
+					end
+				end
+				local size = options["Size"]
+				if not size then size = 14 end
+				name.Size = size
+				if part ~= nil then
+					name.Position = WTS(part)+Vector2.new(0,options["YOffset"],0) + Vector2.new(0,currentlayer*15,0)
+				else
+					break
+				end
+				local tabto = options["Team"]
+				if tabto and table.find(tabto,part.Parent.Name) and typ == "Name" then
+					name.Color = Color3.fromRGB(15,165,80)
+				end
+				local _, screen = workspace.CurrentCamera:WorldToViewportPoint(part.Position)
+				if screen and esping then
+					name.Visible = true
+				else
+					name.Visible = false
+				end
+			end
+			name:Remove()
+		end)
+	end)
+end
+local function createspframe(name,par)
+	if not par or not name then return end
+	local Frame = CreateInstance('Frame',{Style=Enum.FrameStyle.Custom,Active=false,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=1,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0.0500003137, 0, 0.0232558139, 0),Rotation=0,Selectable=false,Size=UDim2.new(0, 92, 0, 25),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name = name,Parent = par})
+	local Team = CreateInstance('TextButton',{Font=Enum.Font.SourceSans,FontSize=Enum.FontSize.Size8,Text='',TextColor3=Color3.new(0, 0, 0),TextScaled=false,TextSize=1,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=1,TextTransparency=1,TextWrapped=false,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,AutoButtonColor=true,Modal=false,Selected=false,Style=Enum.ButtonStyle.Custom,Active=true,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(0, 1, 0),BackgroundTransparency=0.25,BorderColor3=Color3.new(0.207843, 0.207843, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0, 0, 0.150000006, 0),Rotation=0,Selectable=true,Size=UDim2.new(0, 20, 0, 20),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='Button',Parent = Frame})
+	local TextLabel = CreateInstance('TextLabel',{Font=Enum.Font.SciFi,FontSize=Enum.FontSize.Size14,Text=name,TextColor3=Color3.new(0, 0, 0),TextScaled=true,TextSize=14,TextStrokeColor3=Color3.new(0, 0, 0),TextStrokeTransparency=0.83999997377396,TextTransparency=0,TextWrapped=true,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,Active=false,AnchorPoint=Vector2.new(0, 0),BackgroundColor3=Color3.new(1, 1, 1),BackgroundTransparency=1,BorderColor3=Color3.new(0.105882, 0.164706, 0.207843),BorderSizePixel=1,ClipsDescendants=false,Draggable=false,Position=UDim2.new(0.949999988, 0, 0.0500000007, 0),Rotation=0,Selectable=false,Size=UDim2.new(0, 70, 0, 17),SizeConstraint=Enum.SizeConstraint.RelativeXY,Visible=true,ZIndex=1,Name='TextLabel',Parent = Team})
+	return Team
+end
+local function eto(v,typ,color)
+	v.CharacterAdded:Connect(function(char)
+		local hrp = char:WaitForChild("HumanoidRootPart")
+		if not color then color = Color3.new(0.9/0.9,0.9/0.9,0.9/0.9) end
+		ESPText(hrp,color,typ)
+	end)
+end
+spawn(function()
+	for i,v in pairs(Players:GetChildren()) do
+		if v ~= Players.LocalPlayer then
+			if v.Character then
+				local hrp = v.Character:FindFirstChild("HumanoidRootPart")
+				ESPText(hrp,Color3.new(0.9/0.9,0.9/0.9,0.9/0.9),"Name")
+				spawn(function()
+					wait(1)
+					eto(v,"Name")
+				end)
+			else
+				eto(v,"Name")
+			end
+		end
+	end
+	Players.PlayerAdded:Connect(function(p)
+		eto(p,"Name")
+	end)
+	Players.PlayerRemoved:Connect(function(p)
+		layer[p.Name] = nil
+		for i,v in pairs(namelist) do
+			if tostring(v) == tostring(p.Name) then
+				i:Remove()
+				namelist[i] = nil
+			end
+		end
+	end)
+end)
+local tabtonotadd = {"Mana","Edict"}
+local function addfeatures(args)
+	for i,v in pairs(args) do
+		if not table.find(tabtonotadd,tostring(v)) then
+			spfeatures[v] = false
+			local f = createspframe(tostring(v),ScrollingFrame)
+			buttonclick(f)
+			spawn(function()
+				for k,t in pairs(Players:GetChildren()) do
+					if t ~= Players.LocalPlayer then
+						if t.Character then
+							local hrp = t.Character:FindFirstChild("HumanoidRootPart")
+							ESPText(hrp,Color3.new(0.9/0.9,0.9/0.9,0.9/0.9),tostring(v))
+							spawn(function()
+								wait(1)
+								eto(v,tostring(v))
+							end)
+						else
+							eto(t,tostring(v),Color3.new(0.9/0.9,0.9/0.9,0.9/0.9))
+						end
+					end
+				end
+			end)
+		end
+	end
+end
+if place == "FakeRL" then
+	addfeatures({"Class","Race","Mana"})
+end
