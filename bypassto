@@ -52,10 +52,10 @@ local function disablu()
 	end)
 end
 Players.LocalPlayer.CharacterAdded:Connect(function()
-	wait(2)
+	repeat wait() until Players.LocalPlayer.Character.HumanoidRootPart
 	humanoid = Players.LocalPlayer.Character.Humanoid
 	rp = Players.LocalPlayer.Character.HumanoidRootPart
-	wait()
+	wait(2)
 	disablu()
 end)
 local function notification(text)
