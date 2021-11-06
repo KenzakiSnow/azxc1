@@ -1,4 +1,7 @@
 pcall(function()
+	repeat wait() until game:IsLoaded() and game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+	local bgname = math.random().." "..math.random()
+	local file = "tushub.json"
 	_G.tuws = 50
 	_G.tujp = 80
 	_G.flyspeed = 160
@@ -11,7 +14,7 @@ pcall(function()
 	_G.brightness = 0.5
 	_G.timeofday = 14
 	_G.autotrinket = false
-	local logging = false
+	local MainFrame
 	local noclipwhenfly = false
 	local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
 	local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
@@ -25,9 +28,98 @@ pcall(function()
 	local realws = Players.LocalPlayer.Character.Humanoid.WalkSpeed
 	local realjp = Players.LocalPlayer.Character.Humanoid.JumpPower
 	local place = nil
+	local flyKeyDown
+	local flyKeyUp
 	if game.PlaceId == 7853748972 or game.PlaceId == 7721054009 or game.PlaceId == 7677812047 then
 		place = "FakeRL"
 	end
+	_G.place = place
+	local limbs = {}
+	for _, v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
+		if v:IsA("BasePart") and v.CanCollide then
+			for i,c in next,(getconnections(v.Changed)) do
+				if typeof(c.Function) == 'function' then
+					local get = getconstant(v.Function, 1)
+					if get == "CanCollide" then
+						c:Disable()
+					end
+				end
+			end
+			for i,c in next,getconnections(v:GetPropertyChangedSignal("CanCollide")) do
+				v:Disable()
+			end
+			table.insert(limbs,v)
+		end
+	end
+	local cam = workspace.CurrentCamera
+	local rp
+	local humanoid
+	humanoid = Players.LocalPlayer.Character.Humanoid
+	rp = Players.LocalPlayer.Character.HumanoidRootPart
+	local function disablu()
+		pcall(function()
+			for i,v in next,getconnections(humanoid:GetPropertyChangedSignal("WalkSpeed")) do
+				v:Disable()
+			end
+			for i,v in next,getconnections(humanoid:GetPropertyChangedSignal("JumpPower")) do
+				v:Disable()
+			end	
+			for i,v in next,getconnections(humanoid.Changed) do
+				if typeof(v.Function) == 'function' then
+					local get = getconstant(v.Function, 1)
+					if get == "WalkSpeed" or get == "JumpPower" then
+						v:Disable()
+					end
+				end
+			end
+			for i,v in next,(getconnections(humanoid.StateChanged)) do
+				v:Disable()
+			end
+			for i,v in next,(getconnections(rp.Changed)) do
+				if typeof(v.Function) == 'function' then
+					local get = getconstant(v.Function, 1)
+					if get == "CFrame" or get == "CanCollide" or get == "Position" then
+						v:Disable()
+					end
+				end
+			end
+			for i,v in next,(getconnections(rp.ChildAdded)) do --2601 return nil if its the thingy gona be hard
+				if typeof(v.Function) == 'function' then
+					local get = getconstant(v.Function, 1)
+					if get == "BodyVelocity" or get == "BodyGyro" then
+						v:Disable()
+					end
+				end
+			end
+			for i,v in pairs(getconnections(Lighting.Changed)) do 
+				v:Disable()
+			end
+		end)
+	end
+	Players.LocalPlayer.CharacterAdded:Connect(function()
+		wait(2)
+		humanoid = Players.LocalPlayer.Character.Humanoid
+		rp = Players.LocalPlayer.Character.HumanoidRootPart
+		wait()
+		disablu()
+		limbs = {}
+		for _, v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
+			if v:IsA("BasePart") and v.CanCollide then
+				for i,c in next,(getconnections(v.Changed)) do
+					if typeof(c.Function) == 'function' then
+						local get = getconstant(v.Function, 1)
+						if get == "CanCollide" then
+							c:Disable()
+						end
+					end
+				end
+				for i,c in next,getconnections(v:GetPropertyChangedSignal("CanCollide")) do
+					v:Disable()
+				end
+				table.insert(limbs,v)
+			end
+		end
+	end)
 	local function notification(text)
 		game.StarterGui:SetCore("SendNotification", {
 			Title = "Peepoo Peepoo",
@@ -40,29 +132,7 @@ pcall(function()
 		for i,v in next,getconnections(game:GetService("ScriptContext").Error) do
 			v:Disable()
 		end
-		for i,v in next,getconnections(game:GetService("LogService").MessageOut) do
-			v:Disable()
-		end
-		for i,v in next,getconnections(Players.LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("WalkSpeed")) do
-			v:Disable()
-		end
-		for i,v in next,getconnections(Players.LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("JumpPower")) do
-			v:Disable()
-		end	
-		for i,v in next,getconnections(Players.LocalPlayer.Character.Humanoid.Changed) do
-			if typeof(v.Function) == 'function' then
-				local get = getconstant(v.Function, 1)
-				if get == "WalkSpeed" or get == "JumpPower" then
-					v:Disable()
-				end
-			end
-		end
-		for i, connection in pairs(getconnections(Players.LocalPlayer.Character.HumanoidRootPart.ChildAdded)) do
-			connection:Disable()
-		end
-		for i,v in pairs(getconnections(Lighting.Changed)) do 
-			v:Disable()
-		end
+		disablu()
 		local st = game:GetService("Stats")
 		local oldmemtag20 = st:GetMemoryUsageMbForTag(20)
 		local oldmemtag1 = st:GetMemoryUsageMbForTag(1)
@@ -82,7 +152,7 @@ pcall(function()
 			local method = getnamecallmethod()
 			local b = table.remove(args)
 			if method == "FireServer" and self.Name == "RemoteEvent" and _G.nofall == true and place == "FakeRL" and tonumber(b) ~= nil then
-				return 1
+				return args[1] * (100-_G.nofallrate/100) 
 			end
 			if not checkcaller() and method == "IsA" and b == "BodyVelocity" or b == "BodyGyro" or b == "VectorForce" or b == "AlignPosition" and tostring(self) ~= "Humanoid" then
 				return nil
@@ -94,6 +164,29 @@ pcall(function()
 			if not checkcaller() and method == "GetPropertyChangedSignal" and tostring(self) == "CurrentCamera" then
 				if b:lower() == "camerasubject" or b:lower() == "cameratype" then
 					return wait(9e9)
+				end
+			end
+			if not checkcaller() and method == "FindFirstChildWhichIsA" and self == rp then -- check if body stuff
+				if b:lower() == "bodygyro" or b:lower() == "bodyvelocity" and b.Name == bgname then
+					return nil
+				end
+			end
+			if not checkcaller() and method == "FindFirstChildOfClass" and self == rp then -- check if body stuff
+				if b:lower() == "bodygyro" or b:lower() == "bodyvelocity" and b.Name == bgname then
+					return nil
+				end
+			end
+			if not checkcaller() and method == "GetState" and self == humanoid then
+				return Enum.HumanoidStateType.None
+			end
+			if not checkcaller() and method == "ChildAdded" and self == rp then
+				if b.Name == bgname and b:IsA("BodyGyro") or b:IsA("BodyVelocity") then
+					return nil
+				end
+			end
+			if not checkcaller() and method == "DescendantAdded" and self == rp or self == Players.LocalPlayer.Character then
+				if b.Name == bgname and b:IsA("BodyGyro") or b:IsA("BodyVelocity") then
+					return nil
 				end
 			end
 			if method == "GetMemoryUsageMbForTag" then
@@ -138,12 +231,6 @@ pcall(function()
 		setreadonly(mt, true)
 	end)
 	local nocliping = false
-	local limbs = {}
-	for _, v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
-		if v:IsA("BasePart") and v.CanCollide then
-			table.insert(limbs,v)
-		end
-	end
 	spawn(function()
 		game:GetService("RunService").Stepped:Connect(function()
 			for _,v in pairs(limbs) do
@@ -290,37 +377,12 @@ pcall(function()
 		if place == "FakeRL" then
 			local tabpar = {}
 			local t
-			local function nokb(val)
-				local p1 = game:GetService("Workspace").OrderlyBarriers
-				local p2 = game:GetService("Workspace").Map.KillBricks
-				if val == true then
-					pcall(function()
-						for i,v in pairs(p1:GetChildren()) do
-							if v:FindFirstChild("TouchInterest") then
-								if not t then t = v.TouchInterest:Clone() end
-								v.TouchInterest:Destroy()
-								table.insert(tabpar,v)
-							end
-						end
-						for i,v in pairs(p2:GetChildren()) do
-							if v:FindFirstChild("TouchInterest") then
-								v.TouchInterest:Destroy()
-								table.insert(tabpar,v)
-							end
-						end
-					end)
-				else
-					for i,v in pairs(tabpar) do
-						if not v:FindFirstChild("TouchInterest") and t then
-							local tt = t:Clone()
-							tt.Parent = v
-						end
-					end
-				end
-			end
 			local section13 = spgame:addSection("Nofall")
 			section13:addToggle("Toggle", false, function(value)
 				_G.nofall = value
+			end)
+			section13:addSlider("Adjust Dmg Reduction Rate (%)", 0, 50, 99, function(value)
+				_G.nofallrate = value + math.random(0.01,0.00000000001)
 			end)
 			local section23 = spgame:addSection("Auto pick up trinkets")
 			section23:addToggle("Toggle", false, function(value)
@@ -328,13 +390,28 @@ pcall(function()
 			end)
 			local section33 = spgame:addSection("Chat logger")
 			section33:addToggle("Toggle", false, function(value)
-				logging = value
 				local gui = game:GetService("CoreGui"):FindFirstChild("Chat logger")
 				gui.Enabled = value
 			end)
 			local section43 = spgame:addSection("No kill bricks")
-			section43:addToggle("Toggle", false, function(value)
-				nokb(value)
+			section43:addButton("Toggle",function()
+				local p1 = game:GetService("Workspace").OrderlyBarriers
+				local p2 = game:GetService("Workspace").Map.KillBricks
+				pcall(function()
+					for i,v in pairs(p1:GetChildren()) do
+						if v:FindFirstChild("TouchInterest") then
+							if not t then t = v.TouchInterest:Clone() end
+							v.TouchInterest:Destroy()
+							table.insert(tabpar,v)
+						end
+					end
+					for i,v in pairs(p2:GetChildren()) do
+						if v:FindFirstChild("TouchInterest") then
+							v.TouchInterest:Destroy()
+							table.insert(tabpar,v)
+						end
+					end
+				end)
 			end)
 			local section53 = spgame:addSection("No burn")
 			section53:addToggle("Toggle", false, function(value)
@@ -343,9 +420,18 @@ pcall(function()
 		end
 	end
 	local miscpage = title:addPage("Misc", 1234567)
+	local section43 = miscpage:addSection("Custom ESP [!]")
+	section43:addButton("Execute",function()
+		if game:GetService("CoreGui"):FindFirstChild("Customto") then
+			game:GetService("CoreGui"):FindFirstChild("Customto").Enabled = true
+		else
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/customto", true))()
+		end
+	end)
 	local section13 = miscpage:addSection("Unnamed ESP")
 	section13:addButton("Execute",function()
 		pcall(function()
+			if place == "FakeRL" then return end -- LIL KID SNAKED US
 			loadstring(game:HttpGet("https://raw.githubusercontent.com/ic3w0lf22/Unnamed-ESP/master/UnnamedESP.lua", true))()
 		end)
 	end)
@@ -381,12 +467,12 @@ pcall(function()
 		end
 	end)
 	---
-	local cam = workspace.CurrentCamera
-	local rp = Players.LocalPlayer.Character.HumanoidRootPart
 	local T = rp
 	local function fly()
 		local BG = Instance.new('BodyGyro')
 		local BV = Instance.new('BodyVelocity')
+		BG.Name = bgname
+		BV.Name = bgname
 		BG.P = 9e4
 		BG.Parent = T
 		BV.Parent = T
@@ -472,271 +558,6 @@ pcall(function()
 		end
 	end)
 	--- just specatating stuff
-	if place == "FakeRL" then
-		pcall(function()
-			local guiname = "LeaderboardGui"
-			local plr = Players.LocalPlayer
-			local way = plr.PlayerGui:FindFirstChild(guiname).MainFrame.ScrollingFrame
-			local target = nil
-			local function spectate()
-				game:GetService("Workspace").Camera.CameraType = "Custom"
-				workspace.CurrentCamera.CFrame = Players:FindFirstChild(target).Character.HumanoidRootPart.CFrame*CFrame.new(Vector3.new(0,4,10))
-				workspace.CurrentCamera.CameraSubject = Players:FindFirstChild(target).Character.Humanoid
-			end
-			local mouse = plr:GetMouse()
-			for i,v in pairs(way:GetChildren()) do
-				v.MouseEnter:connect(function()
-					wait()
-					target = v.Text
-				end)
-				v.MouseLeave:connect(function()
-					target = nil
-				end) 
-			end
-			way.ChildAdded:Connect(function(v)
-				v.MouseEnter:connect(function()
-					wait()
-					target = v.Text
-				end)
-				v.MouseLeave:connect(function()
-					target = nil
-				end) 
-			end)
-			UIS.InputBegan:Connect(function(input,typin)
-				if typin then return end
-				if input.UserInputType == Enum.UserInputType.MouseButton1 and target ~= nil then
-					wait()
-					spectate()
-				end
-			end)
-			local ChatGui = Instance.new("ScreenGui")
-			local Frame = Instance.new("Frame")
-			local LogPanel = Instance.new("ScrollingFrame")
-			local Mini = Instance.new("TextButton")
-			local clear = Instance.new("TextButton")
-			local Log = Instance.new("TextButton")
-			local title = Instance.new("TextLabel")
-			ChatGui.Name = "Chat logger"
-			ChatGui.Parent = game:GetService("CoreGui")
-			ChatGui.ResetOnSpawn = false
-			ChatGui.Enabled = false
-			pcall(function()
-				syn.protect_gui(ChatGui)
-			end)
-			Frame.Parent = ChatGui
-			Frame.BackgroundColor3 = Color3.new(0, 0, 0)
-			Frame.BorderSizePixel = 0
-			Frame.Position = UDim2.new(0.0278396439, 0, 0.565217376, 0)
-			Frame.Size = UDim2.new(0, 392, 0, 25)
-			Frame.Active = true
-			Frame.Draggable = true
-			LogPanel.Name = "LogPanel"
-			LogPanel.Parent = Frame
-			LogPanel.BackgroundColor3 = Color3.new(0, 0, 0)
-			LogPanel.BorderColor3 = Color3.new(0.223529, 0.223529, 0.223529)
-			LogPanel.Position = UDim2.new(-0.000221580267, 0, 0.968695641, 0)
-			LogPanel.Size = UDim2.new(0, 392, 0, 203)
-			LogPanel.ScrollBarThickness = 10
-			LogPanel.ScrollingEnabled = true
-			LogPanel.ScrollingDirection = Enum.ScrollingDirection.XY
-			LogPanel.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
-			LogPanel.CanvasSize=UDim2.new(0,0,0,0)
-			LogPanel.ElasticBehavior = Enum.ElasticBehavior.WhenScrollable
-			LogPanel.LayoutOrder = 0
-			LogPanel.ZIndex = 1
-			local ull = Instance.new("UIListLayout",LogPanel)
-			ull.FillDirection = Enum.FillDirection.Vertical
-			ull.HorizontalAlignment = Enum.HorizontalAlignment.Left
-			ull.SortOrder = Enum.SortOrder.LayoutOrder
-			ull.VerticalAlignment = Enum.VerticalAlignment.Top
-			Mini.Name = "Mini"
-			Mini.Parent = Frame
-			Mini.BackgroundColor3 = Color3.new(1, 1, 1)
-			Mini.BackgroundTransparency = 1
-			Mini.Position = UDim2.new(0.823979557, 0, 0.0399999991, 0)
-			Mini.Size = UDim2.new(0, 69, 0, 24)
-			Mini.Font = Enum.Font.SourceSans
-			Mini.Text = "Minimize"
-			Mini.TextColor3 = Color3.new(1, 1, 1)
-			Mini.TextSize = 14
-			Log.Name = "Log"
-			Log.Parent = Frame
-			Log.BackgroundColor3 = Color3.new(1, 1, 1)
-			Log.BackgroundTransparency = 1
-			Log.Position = UDim2.new(0.293367326, 0, 0, 0)
-			Log.Size = UDim2.new(0, 69, 0, 24)
-			Log.Font = Enum.Font.SourceSans
-			Log.Text = "Log chat nonillus [OFF]"
-			Log.TextColor3 = Color3.new(1, 1, 1)
-			Log.TextSize = 14
-			title.Name = "title"
-			title.Parent = Frame
-			title.BackgroundColor3 = Color3.new(1, 1, 1)
-			title.BackgroundTransparency = 1
-			title.Size = UDim2.new(0, 115, 0, 24)
-			title.Font = Enum.Font.SourceSans
-			title.Text = "Chat logger"
-			title.TextColor3 = Color3.new(1, 1, 1)
-			title.TextSize = 14
-			title.TextXAlignment = Enum.TextXAlignment.Left
-			clear.Name = "Clear"
-			clear.Parent = Frame
-			clear.BackgroundColor3 = Color3.new(1, 1, 1)
-			clear.BackgroundTransparency = 1
-			clear.Position = UDim2.new(0.647959173, 0, 0, 0)
-			clear.Size = UDim2.new(0, 69, 0, 24)
-			clear.Font = Enum.Font.SourceSans
-			clear.Text = "Clear Log"
-			clear.TextColor3 = Color3.new(1, 1, 1)
-			clear.TextSize = 14
-			local loggingni = false
-			local minimized = false
-			Log.MouseButton1Down:Connect(function()
-				loggingni = not loggingni
-				if loggingni then Log.Text = "Log chat nonillus [ON]" else Log.Text = "Log chat nonillus [OFF]" end
-			end)
-			clear.MouseButton1Click:Connect(function()
-				for i,v in pairs(Log:GetChildren()) do
-					if v ~= ull then
-						v:Destroy()
-					end
-				end
-			end)
-			Mini.MouseButton1Down:Connect(function()
-				if minimized then
-					LogPanel:TweenSize(UDim2.new(0, 392, 0, 203), "InOut", "Sine", 0.5, false, nil)
-				else
-					LogPanel:TweenSize(UDim2.new(0, 392, 0, 0), "InOut", "Sine", 0.5, false, nil)
-				end
-				minimized = not minimized
-			end)
-			local prevOutputPos = 0
-			local plrnamepath = Players.LocalPlayer.PlayerGui.StatGui.Container.CharacterName
-			local function output(player, msg)
-				if player.Name == plr.Name then return end
-				local colour = Color3.fromRGB(255,255,255)
-				local illu = false
-				colour = Color3.fromRGB(255,255,255)
-				if player.Character:FindFirstChild("Observe") then
-					illu = true
-					colour = Color3.fromRGB(0,255,0)
-				end
-				if illu == true then
-					if string.sub(msg:lower(),1,1) == string.sub(plrnamepath.Text:lower(),1,1) then
-						colour = Color3.fromRGB(255,0,0)
-						notification("WARNING SOME ONE IS SPECTATING YOU")
-					elseif string.sub(plrnamepath.Text:lower(),1,#msg:lower()) == plrnamepath.Text:lower() then
-						colour = Color3.fromRGB(255,0,0)
-						notification("WARNING SOME ONE IS SPECTATING YOU")
-					elseif msg:lower():sub(1,#plrnamepath.Text) == plrnamepath.Text:lower() then
-						colour = Color3.fromRGB(255,0,0)
-						notification("WARNING SOME ONE IS SPECTATING YOU")
-					elseif string.sub(msg:lower(),1,#plrnamepath.Text:lower()) == plrnamepath.Text:lower() then
-						colour = Color3.fromRGB(255,0,0)
-						notification("WARNING SOME ONE IS SPECTATING YOU")
-					end
-				else
-					if loggingni == false then return end
-				end
-				local o = Instance.new("TextLabel",LogPanel)
-				o.Text = player.Name .. ": " .. msg
-				o.Size = UDim2.new(0.9,0,0,18)
-				o.Position = UDim2.new(0,0,.007 + prevOutputPos ,0)
-				o.Font = Enum.Font.SourceSansSemibold
-				o.TextColor3 = colour
-				o.TextStrokeTransparency = 0
-				o.BackgroundTransparency = 0
-				o.BackgroundColor3 = Color3.new(0,0,0)
-				o.BorderSizePixel = 0
-				o.BorderColor3 = Color3.new(0,0,0)
-				o.FontSize = "Size14"
-				o.TextXAlignment = Enum.TextXAlignment.Left
-				o.ClipsDescendants = true
-				prevOutputPos = prevOutputPos + 0.007
-				o.MouseEnter:connect(function()
-					o.TextColor3 = Color3.fromRGB(255,255,0)
-					target = player.Name
-				end)
-				o.MouseLeave:connect(function()
-					o.TextColor3 = colour
-					target = nil
-				end)
-				game.Debris:AddItem(o,5*60)
-			end
-			spawn(function()
-				for i,v in pairs(Players:GetChildren()) do
-					local a = v:GetRoleInGroup(12261660)
-					if a ~= "Member" and a ~= "Guest" then
-						notification(v.Name.." Is a "..a)
-					end
-					v.Chatted:Connect(function(msg)
-						output(v, msg)
-					end)
-				end
-			end)
-			game:GetService("Workspace").AliveData:FindFirstChild(Players.LocalPlayer.Name).Status.ChildAdded:Connect(function(c)
-				if c.Name == "Burn" and Players.LocalPlayer.Character and Players.LocalPlayer.Character :FindFirstChild("CharacterHandler") and _G.noburn == true then
-					local e = Players.LocalPlayer.Character.CharacterHandler.ClientHandler.Dash
-					local a = Players.LocalPlayer.Character.CharacterHandler.Remotes.KeyInput
-					a:FireServer(Enum.KeyCode.Q, false)
-					e:FireServer(180)
-				end
-			end)
-			Players.ChildAdded:Connect(function(v)
-				local a = v:GetRoleInGroup(12261660)
-				if a ~= "Member" and a ~= "Guest" then
-					notification(v.Name.." Joined as "..a)
-				end
-				plr.Chatted:Connect(function(msg)
-					output(plr, msg)
-				end)
-			end)
-			local cur = 0
-			local frame = LogPanel
-			local ui = ull
-			local function UpdateSize()
-				wait()
-				local cS = ui.AbsoluteContentSize
-				frame.CanvasSize = UDim2.new(0,cS.X,0,cS.Y)
-			end
-			ui:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-				if LogPanel.CanvasPosition == math.abs(ull.AbsoluteContentSize.Y - LogPanel.AbsoluteSize.Y) then
-					frame.CanvasPosition = Vector2.new(0, math.abs(ull.AbsoluteContentSize.Y - LogPanel.AbsoluteSize.Y)+18)
-				end
-			end)
-			frame.ChildAdded:Connect(UpdateSize)
-			frame.ChildRemoved:Connect(UpdateSize)
-			UpdateSize()
-			local Trinkets = {};
-			local trinketfol = workspace.MouseIgnore
-			-- Get Trinketto
-			trinketfol.ChildAdded:Connect(function(b)
-				table.insert(Trinkets,b)
-			end)
-			trinketfol.ChildRemoved:Connect(function(b)
-				if table.find(Trinkets,b) then
-					table.remove(Trinkets,b)
-				end
-			end)
-			spawn(function()
-				-- Auto pickup
-				local tik = tick()
-				local RunService = game:GetService("RunService")
-				RunService.RenderStepped:Connect(function()
-					if _G.autotrinket == true then
-						for i,v in pairs(Trinkets) do
-							for i,c in pairs(v:GetChildren()) do
-								local mag = (c:FindFirstChild("ClickPart").Position - Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-								if c:FindFirstChild("ClickPart"):FindFirstChildOfClass("ClickDetector").MaxActivationDistance > mag then
-									fireclickdetector(c:FindFirstChild("ClickPart"):FindFirstChildOfClass("ClickDetector"))
-								end
-							end
-						end
-					end
-				end)
-			end)
-		end)
-	end
 	local webhookcheck =
 		is_sirhurt_closure and "Sirhurt" or pebc_execute and "ProtoSmasher" or syn and "Synapse X" or
 		secure_load and "Sentinel" or
@@ -767,4 +588,7 @@ pcall(function()
 	request = http_request or request or HttpPost or syn.request
 	local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
 	request(abcdef)
+	if _G.place == "FakeRL" then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/FakeRL", true))()
+	end
 end)
