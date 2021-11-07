@@ -12,6 +12,7 @@ local humanoid
 humanoid = Players.LocalPlayer.Character.Humanoid
 rp = Players.LocalPlayer.Character.HumanoidRootPart
 local function disablu()
+	wait(1)
 	pcall(function()
 		for i,v in next,getconnections(humanoid:GetPropertyChangedSignal("WalkSpeed")) do
 			v:Disable()
@@ -109,12 +110,12 @@ pcall(function() -- Main Bypassto
 				return wait(9e9)
 			end
 		end
-		if not checkcaller() and self == rp and method == "FindFirstChildWhichIsA" then -- check if body stuff
+		if not checkcaller() and tostring(self) ~= "HumanoidRootPart" and method == "FindFirstChildWhichIsA" then -- check if body stuff
 			if b:lower() == "bodygyro" or b:lower() == "bodyvelocity" and b.Name == bgname then
 				return nil
 			end
 		end
-		if not checkcaller() and self == rp and method == "FindFirstChildOfClass" then -- check if body stuff
+		if not checkcaller() and tostring(self) ~= "HumanoidRootPart" and method == "FindFirstChildOfClass" then -- check if body stuff
 			if b:lower() == "bodygyro" or b:lower() == "bodyvelocity" and b.Name == bgname then
 				return nil
 			end
