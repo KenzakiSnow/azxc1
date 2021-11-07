@@ -2,6 +2,6 @@ if _G.tushubinjected == true then return end
 _G.tushubinjected = true
 pcall(function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/bypassto", true))()
-wait(1)
+wait(6)
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/tushub", true))()
 end)
