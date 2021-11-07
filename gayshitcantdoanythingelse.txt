@@ -1,5 +1,5 @@
 pcall(function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/bypassto", true))()
-wait(6)
+wait(1)
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/tushub", true))()
 end)
