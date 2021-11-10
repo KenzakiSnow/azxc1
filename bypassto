@@ -13,44 +13,51 @@ local humanoid
 humanoid = Players.LocalPlayer.Character.Humanoid
 rp = Players.LocalPlayer.Character.HumanoidRootPart
 local function disablu()
-	wait(1)
-	pcall(function()
-		for i,v in next,getconnections(humanoid:GetPropertyChangedSignal("WalkSpeed")) do
-			v:Disable()
-		end
-		for i,v in next,getconnections(humanoid:GetPropertyChangedSignal("JumpPower")) do
-			v:Disable()
-		end	
-		for i,v in next,getconnections(humanoid.Changed) do
-			if typeof(v.Function) == 'function' then
-				local get = getconstant(v.Function, 1)
-				if get == "WalkSpeed" or get == "JumpPower" then
-					v:Disable()
+	spawn(function()
+		pcall(function()
+			for i,v in next,getconnections(humanoid:GetPropertyChangedSignal("WalkSpeed")) do
+				v:Disable()
+			end
+			wait()
+			for i,v in next,getconnections(humanoid:GetPropertyChangedSignal("JumpPower")) do
+				v:Disable()
+			end	
+			wait()
+			for i,v in next,getconnections(humanoid.Changed) do
+				if typeof(v.Function) == 'function' then
+					local get = getconstant(v.Function, 1)
+					if get == "WalkSpeed" or get == "JumpPower" then
+						v:Disable()
+					end
 				end
 			end
-		end
-		for i,v in next,(getconnections(humanoid.StateChanged)) do -- MAYBE?
-			v:Disable()
-		end
-		for i,v in next,(getconnections(rp.Changed)) do -- DO THEY DO IT LOCALLY? ILL SHOULD CHECK
-			if typeof(v.Function) == 'function' then
-				local get = getconstant(v.Function, 1)
-				if get == "CFrame" or get == "CanCollide" or get == "Position" then
-					v:Disable()
+			wait(1)
+			for i,v in next,(getconnections(humanoid.StateChanged)) do -- MAYBE?
+				v:Disable()
+			end
+			wait()
+			for i,v in next,(getconnections(rp.Changed)) do -- DO THEY DO IT LOCALLY? ILL SHOULD CHECK
+				if typeof(v.Function) == 'function' then
+					local get = getconstant(v.Function, 1)
+					if get == "CFrame" or get == "CanCollide" or get == "Position" then
+						v:Disable()
+					end
 				end
 			end
-		end
-		for i,v in next,(getconnections(rp.ChildAdded)) do --2601 return nil if its the thingy gona be hard CHECK IN RLT (MAKE Riding skills dont work properly)
-			if typeof(v.Function) == 'function' then
-				local get = getconstant(v.Function, 1)
-				if get == "BodyVelocity" or get == "BodyGyro" then
-					v:Disable()
+			wait(1)
+			for i,v in next,(getconnections(rp.ChildAdded)) do --2601 return nil if its the thingy gona be hard CHECK IN RLT (MAKE Riding skills dont work properly)
+				if typeof(v.Function) == 'function' then
+					local get = getconstant(v.Function, 1)
+					if get == "BodyVelocity" or get == "BodyGyro" then
+						v:Disable()
+					end
 				end
 			end
-		end
-		for i,v in pairs(getconnections(Lighting.Changed)) do  -- CHECK IN RLT (COULD BE REASON TO GET BANNED)
-			v:Disable()
-		end
+			wait(1)
+			for i,v in pairs(getconnections(Lighting.Changed)) do
+				v:Disable()
+			end
+		end)
 	end)
 end
 Players.LocalPlayer.CharacterAdded:Connect(function()
@@ -74,8 +81,10 @@ pcall(function() -- Main Bypassto
 			v:Disable()
 		end
 	end
+	print("Disablu")
 	disablu()
-	wait(1)
+	wait(3)
+	print("Done Disablu")
 	local st = game:GetService("Stats")
 	local oldmemtag20 = st:GetMemoryUsageMbForTag(20)
 	local oldmemtag1 = st:GetMemoryUsageMbForTag(1)
@@ -85,14 +94,15 @@ pcall(function() -- Main Bypassto
 		return str:gsub(" ","")
 	end
 	local c = false
+	print("get Mt")
 	local mt = getrawmetatable(game)
 	local index = mt.__index
 	local newindex = mt.__newindex
-	shared.__namecall = getrawmetatable(game).__namecall
-	local mt = getrawmetatable(game)
+	shared.__namecall = mt.__namecall
 	local m = game.Players.LocalPlayer:GetMouse()
 	setreadonly(mt, false)
-	getrawmetatable(game).__namecall = function(self, ...)
+	print("nem")
+	mt.__namecall = function(self, ...)
 		local args = {...}
 		local b = table.remove(args)
 		local a = getnamecallmethod()
@@ -102,16 +112,6 @@ pcall(function() -- Main Bypassto
 		if not checkcaller() and a == "Kick" then
 			notification("Something is trying to kick u UwU")
 			return wait(9e9)
-		end
-		if not checkcaller() and a == "GetPropertyChangedSignal" and tostring(self) == "CurrentCamera" then
-			if b:lower() == "camerasubject" or b:lower() == "cameratype" then
-				return wait(9e9)
-			end
-		end
-		if not checkcaller() and tostring(self) ~= "HumanoidRootPart" and a == "FindFirstChildWhichIsA" then -- check if body stuff 
-			if b:lower() == "bodygyro" or b:lower() == "bodyvelocity" then -- SUPID
-				return nil
-			end
 		end
 		if not checkcaller() and tostring(self) ~= "HumanoidRootPart" and a == "FindFirstChildOfClass" then -- check if body stuff
 			if b:lower() == "bodygyro" or b:lower() == "bodyvelocity" then -- SUPID
@@ -134,7 +134,8 @@ pcall(function() -- Main Bypassto
 		end
 		return shared.__namecall(self, ...)
 	end
-	wait(2)
+	print("namecall")
+	wait(3)
 	local n = 0
 	local realws = Players.LocalPlayer.Character.Humanoid.WalkSpeed
 	local realjp = Players.LocalPlayer.Character.Humanoid.JumpPower
@@ -162,4 +163,5 @@ pcall(function() -- Main Bypassto
 		return newindex(t,k,v) 
 	end)
 	setreadonly(mt, true)
+	print("Ex")
 end)
