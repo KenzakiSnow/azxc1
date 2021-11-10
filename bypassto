@@ -17,10 +17,12 @@ local function disablu()
 		pcall(function()
 			for i,v in next,getconnections(humanoid:GetPropertyChangedSignal("WalkSpeed")) do
 				v:Disable()
+				wait()
 			end
 			wait()
 			for i,v in next,getconnections(humanoid:GetPropertyChangedSignal("JumpPower")) do
 				v:Disable()
+				wait()
 			end	
 			wait()
 			for i,v in next,getconnections(humanoid.Changed) do
@@ -30,32 +32,32 @@ local function disablu()
 						v:Disable()
 					end
 				end
-			end
-			wait(1)
-			for i,v in next,(getconnections(humanoid.StateChanged)) do -- MAYBE?
-				v:Disable()
+				wait()
 			end
 			wait()
 			for i,v in next,(getconnections(rp.Changed)) do -- DO THEY DO IT LOCALLY? ILL SHOULD CHECK
 				if typeof(v.Function) == 'function' then
-					local get = getconstant(v.Function, 1)
-					if get == "CFrame" or get == "CanCollide" or get == "Position" then
+					local get = getconstants(v.Function, 8)
+					if table.find(get,"CFrame") or table.find(get,"CanCollide") or table.find(get,"Position") then
 						v:Disable()
 					end
 				end
+				wait()
 			end
-			wait(1)
+			wait()
 			for i,v in next,(getconnections(rp.ChildAdded)) do --2601 return nil if its the thingy gona be hard CHECK IN RLT (MAKE Riding skills dont work properly)
 				if typeof(v.Function) == 'function' then
-					local get = getconstant(v.Function, 1)
-					if get == "BodyVelocity" or get == "BodyGyro" then
+					local get = getconstants(v.Function, 8)
+					if table.find(get,"BodyGyro") or table.find(get,"BodyVelocity") then
 						v:Disable()
 					end
 				end
+				wait()
 			end
-			wait(1)
+			wait()
 			for i,v in pairs(getconnections(Lighting.Changed)) do
 				v:Disable()
+				wait()
 			end
 		end)
 	end)
@@ -81,10 +83,9 @@ pcall(function() -- Main Bypassto
 			v:Disable()
 		end
 	end
-	print("Disablu")
+	notification("Loading bypass")
 	disablu()
-	wait(3)
-	print("Done Disablu")
+	wait(2)
 	local st = game:GetService("Stats")
 	local oldmemtag20 = st:GetMemoryUsageMbForTag(20)
 	local oldmemtag1 = st:GetMemoryUsageMbForTag(1)
@@ -94,14 +95,12 @@ pcall(function() -- Main Bypassto
 		return str:gsub(" ","")
 	end
 	local c = false
-	print("get Mt")
 	local mt = getrawmetatable(game)
 	local index = mt.__index
 	local newindex = mt.__newindex
 	shared.__namecall = mt.__namecall
 	local m = game.Players.LocalPlayer:GetMouse()
 	setreadonly(mt, false)
-	print("nem")
 	mt.__namecall = function(self, ...)
 		local args = {...}
 		local b = table.remove(args)
@@ -134,8 +133,7 @@ pcall(function() -- Main Bypassto
 		end
 		return shared.__namecall(self, ...)
 	end
-	print("namecall")
-	wait(3)
+	wait(2)
 	local n = 0
 	local realws = Players.LocalPlayer.Character.Humanoid.WalkSpeed
 	local realjp = Players.LocalPlayer.Character.Humanoid.JumpPower
@@ -163,5 +161,5 @@ pcall(function() -- Main Bypassto
 		return newindex(t,k,v) 
 	end)
 	setreadonly(mt, true)
-	print("Ex")
+	notification("Done! Now Loading Hub")
 end)
