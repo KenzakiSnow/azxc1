@@ -50,7 +50,7 @@ pcall(function()
 		humanoid = Players.LocalPlayer.Character.Humanoid
 		rp = Players.LocalPlayer.Character.HumanoidRootPart
 	end)
-	if game.PlaceId == 7892349466 or game.PlaceId == 7721054009 or game.PlaceId == 3328347965 then
+	if game.PlaceId == 7892349466 or game.PlaceId == 7721054009 or game.PlaceId == 7677812047 then
 		place = "FakeRL"
 	end
 	_G.place = place
@@ -66,9 +66,6 @@ pcall(function()
 		TextColor = Color3.fromRGB(255, 255, 255)
 	}
 	local GUI = game:GetService("CoreGui"):FindFirstChild("Lol Exploiter :grrr: ")
-	pcall(function()
-		syn.protect_gui(GUI)
-	end)
 	local plrPage = title:addPage("Misc", 123)
 	local section1 = plrPage:addSection("Walk Speed")
 	section1:addToggle("Toggle", false, function(value)
@@ -443,6 +440,9 @@ pcall(function()
 				end
 			end)
 			local ChatGui = Instance.new("ScreenGui")
+			pcall(function()
+				syn.protect_gui(ChatGui)
+			end)
 			local Frame = Instance.new("Frame")
 			local LogPanel = Instance.new("ScrollingFrame")
 			local Mini = Instance.new("TextButton")
@@ -453,9 +453,6 @@ pcall(function()
 			ChatGui.Parent = game:GetService("CoreGui")
 			ChatGui.ResetOnSpawn = false
 			ChatGui.Enabled = false
-			pcall(function()
-				syn.protect_gui(ChatGui)
-			end)
 			Frame.Parent = ChatGui
 			Frame.BackgroundColor3 = Color3.new(0, 0, 0)
 			Frame.BorderSizePixel = 0
