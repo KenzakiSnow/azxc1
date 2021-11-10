@@ -3,5 +3,5 @@ _G.tushubinjected = true
 pcall(function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/bypassto", true))()
 wait(6)
---loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/tushub", true))()
+loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/tushub", true))()
 end)
