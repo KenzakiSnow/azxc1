@@ -50,7 +50,7 @@ pcall(function()
 		humanoid = Players.LocalPlayer.Character.Humanoid
 		rp = Players.LocalPlayer.Character.HumanoidRootPart
 	end)
-	if game.PlaceId == 7892349466 or game.PlaceId == 7721054009 or game.PlaceId == 7677812047 then
+	if game.PlaceId == 7892349466 or game.PlaceId == 7721054009 or game.PlaceId == 3328347965 then
 		place = "FakeRL"
 	end
 	_G.place = place
