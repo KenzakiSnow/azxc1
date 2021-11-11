@@ -105,7 +105,7 @@ pcall(function() -- Main Bypassto
 		local args = {...}
 		local b = table.remove(args)
 		local a = getnamecallmethod()
-		if not checkcaller() and a == "IsA" and b == "BodyVelocity" or b == "BodyGyro" or b == "VectorForce" or b == "Tool" or b == "AlignPosition" and tostring(self) ~= "Humanoid" then
+		if not checkcaller() and a == "IsA" and b == "BodyVelocity" or b == "BodyGyro" or b == "VectorForce" or b == "AlignPosition" and tostring(self) ~= "Humanoid" then
 			return nil
 		end
 		if not checkcaller() and a == "Kick" then
