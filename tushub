@@ -560,17 +560,21 @@ pcall(function()
 					colour = Color3.fromRGB(0,255,0)
 				end
 				if illu == true then
+					local isbeingspectated = false
 					if string.sub(msg:lower(),1,1) == string.sub(plrnamepath.Text:lower(),1,1) then
 						colour = Color3.fromRGB(255,0,0)
-						notification("WARNING SOME ONE IS SPECTATING YOU")
+						isbeingspectated = true
 					elseif string.sub(plrnamepath.Text:lower(),1,#msg:lower()) == plrnamepath.Text:lower() then
 						colour = Color3.fromRGB(255,0,0)
-						notification("WARNING SOME ONE IS SPECTATING YOU")
+						isbeingspectated = true
 					elseif msg:lower():sub(1,#plrnamepath.Text) == plrnamepath.Text:lower() then
 						colour = Color3.fromRGB(255,0,0)
-						notification("WARNING SOME ONE IS SPECTATING YOU")
+						isbeingspectated = true
 					elseif string.sub(msg:lower(),1,#plrnamepath.Text:lower()) == plrnamepath.Text:lower() then
 						colour = Color3.fromRGB(255,0,0)
+						isbeingspectated = true
+					end
+					if isbeingspectated == true then
 						notification("WARNING SOME ONE IS SPECTATING YOU")
 					end
 				else
