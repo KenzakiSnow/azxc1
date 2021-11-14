@@ -133,10 +133,10 @@ pcall(function() -- Main Bypassto
 				return oldmemtag5 + math.random(0.00001,0.001)
 			end
 		end
-		if _G.nofall == true and place == "FakeRL" and a == "FireServer" and tonumber(b) ~= nil and tostring(self.Parent) == "FallDamage" then
+		if _G.nofall == true and place == "FakeRL" and a == "FireServer" and tonumber(b) ~= nil and self.Parent.Name == "FallDamage" then
 			return math.abs(args[1] * (100-_G.nofallrate)/100)
 		end
-		if _G.templock == true and place == "FakeRL" and a == "FireServer" and tostring(self.Parent) == "AreaDetection" then
+		if _G.templock == true and place == "FakeRL" and a == "FireServer" and self.Parent.Name == "AreaDetection" then
 			return "Burning"
 		end
 		return shared.__namecall(self, ...)
