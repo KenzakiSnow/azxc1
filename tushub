@@ -50,7 +50,7 @@ pcall(function()
 		humanoid = Players.LocalPlayer.Character.Humanoid
 		rp = Players.LocalPlayer.Character.HumanoidRootPart
 	end)
-	if game.PlaceId == 7892349466 or game.PlaceId == 7721054009 or game.PlaceId == 3328347965 then
+	if game.PlaceId == 7892349466 or game.PlaceId == 7721054009 or game.PlaceId == 7677812047 then
 		place = "FakeRL"
 	end
 	_G.place = place
@@ -69,6 +69,7 @@ pcall(function()
 	local plrPage = title:addPage("Misc", 123)
 	local section1 = plrPage:addSection("Walk Speed")
 	section1:addToggle("Toggle", false, function(value)
+		if place == "FakeRL" then return end
 		_G.ws = value
 		if value == true then
 			Players.LocalPlayer.Character.Humanoid.WalkSpeed = _G.tuws
@@ -84,6 +85,7 @@ pcall(function()
 	end)
 	local section2 = plrPage:addSection("Jump Power")
 	section2:addToggle("Toggle", false, function(value)
+		if place == "FakeRL" then return end
 		_G.jp = value
 		if value == true then
 			Players.LocalPlayer.Character.Humanoid.JumpPower = _G.tujp
@@ -105,10 +107,10 @@ pcall(function()
 	section5:addToggle("Toggle", false, function(value)
 		nocliping = value
 	end)
-	local section4 = plrPage:addSection("Mana Fly")
+	local section4 = plrPage:addSection("Mana Fly (WIP)")
 	_G.fly = Enum.KeyCode.Break
 	section4:addKeybind("Toggle Keybind", Enum.KeyCode.Break, function(c) end, function(c) 
-		_G.fly = c.KeyCode
+		--_G.fly = c.KeyCode
 	end)
 	section4:addSlider("Adjust", 2, 6, 20, function(value)
 		flyspeed = value + math.random(0.01,0.00000000001)
@@ -228,6 +230,10 @@ pcall(function()
 			section53:addToggle("Toggle", false, function(value)
 				_G.noburn = value
 			end)
+			local section63 = spgame:addSection("Temp Lock (hot)")
+			section63:addToggle("Toggle", false, function(value)
+				_G.templock = value
+			end)
 		end
 	end
 	local miscpage = title:addPage("Misc", 1234567)
@@ -244,7 +250,6 @@ pcall(function()
 	local section13 = miscpage:addSection("Unnamed ESP")
 	section13:addButton("Execute",function()
 		pcall(function()
-			if place == "FakeRL" then return end -- LIL KID SNAKED US
 			loadstring(game:HttpGet("https://raw.githubusercontent.com/ic3w0lf22/Unnamed-ESP/master/UnnamedESP.lua", true))()
 		end)
 	end)
