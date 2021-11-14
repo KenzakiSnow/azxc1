@@ -309,6 +309,7 @@ local function ESPText(part,color,typ)
 			local oldname = text
 			while true do
 				game:GetService("RunService").Heartbeat:Wait(options["RR"]/1000)
+				if not part or not part.Parent then break end
 				local y = options["YOffset"]
 				if typ == "Name" then
 					name.Text = oldname.."~["..math.floor(part.Parent:FindFirstChildOfClass("Humanoid").Health).."/"..math.floor(part.Parent:FindFirstChildOfClass("Humanoid").MaxHealth).."]".."~["..math.floor((part.Position - Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude).."]"
@@ -334,6 +335,7 @@ local function ESPText(part,color,typ)
 				local size = options["Size"]
 				if not size then size = 14 end
 				name.Size = size
+				if not part or not part.Parent or not Players:FindFirstChild(part.Parent.Name) then name:Remove() break end
 				if part ~= nil then
 					name.Position = WTS(part)+Vector2.new(0,options["YOffset"],0) + Vector2.new(0,currentlayer*15,0)
 				else
@@ -350,7 +352,9 @@ local function ESPText(part,color,typ)
 					name.Visible = false
 				end
 			end
-			name:Remove()
+			if name then 
+				name:Remove()
+			end
 		end)
 	end)
 end
