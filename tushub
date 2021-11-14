@@ -233,6 +233,9 @@ pcall(function()
 			local section63 = spgame:addSection("Temp Lock (hot)")
 			section63:addToggle("Toggle", false, function(value)
 				_G.templock = value
+				if value == true then
+					Players.LocalPlayer.PlayerGui.Main.AreaDetection.GetTemp:FireServer("Burning")
+				end
 			end)
 		end
 	end
