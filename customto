@@ -303,38 +303,42 @@ local function ESPText(part,color,typ)
 	name.Visible = true
 	name.Color = color
 	table.insert(namelist,name)
+	if not part or not part.Parent then name:Remove() end
 	namelist[name] = part.Parent.Name
 	spawn(function()
 		pcall(function()
 			local oldname = text
 			while true do
 				game:GetService("RunService").Heartbeat:Wait(options["RR"]/1000)
+				if not name then break end
 				if not part or not part.Parent then break end
-				local y = options["YOffset"]
-				if typ == "Name" then
-					name.Text = oldname.."~["..math.floor(part.Parent:FindFirstChildOfClass("Humanoid").Health).."/"..math.floor(part.Parent:FindFirstChildOfClass("Humanoid").MaxHealth).."]".."~["..math.floor((part.Position - Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude).."]"
-				end
-				local newtext
-				if typ ~= "Name" and typ == "Class" and spfeatures["Edict"] == false and Players:FindFirstChild(part.Parent.Name).Data.Edict.Value then
-					name.Text = text.."[!]"..Players:FindFirstChild(part.Parent.Name).Data.Edict.Value.."[!]"
-				end
-				if typ == "Class" then
-					if options["Class"] then
-						if name.Visible == false then name.Visible = true end
-					else
-						if name.Visible == true then name.Visible = false end
+				pcall(function()
+					local y = options["YOffset"]
+					if typ == "Name" then
+						name.Text = oldname.."~["..math.floor(part.Parent:FindFirstChildOfClass("Humanoid").Health).."/"..math.floor(part.Parent:FindFirstChildOfClass("Humanoid").MaxHealth).."]".."~["..math.floor((part.Position - Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude).."]"
 					end
-				end
-				if typ == "Race" then
-					if options["Race"] then
-						if name.Visible == false then name.Visible = true end
-					else
-						if name.Visible == true then name.Visible = false end
+					local newtext
+					if typ ~= "Name" and typ == "Class" and spfeatures["Edict"] == false and Players:FindFirstChild(part.Parent.Name).Data.Edict.Value then
+						name.Text = text.."[!]"..Players:FindFirstChild(part.Parent.Name).Data.Edict.Value.."[!]"
 					end
-				end
-				local size = options["Size"]
-				if not size then size = 14 end
-				name.Size = size
+					if typ == "Class" then
+						if options["Class"] then
+							if name.Visible == false then name.Visible = true end
+						else
+							if name.Visible == true then name.Visible = false end
+						end
+					end
+					if typ == "Race" then
+						if options["Race"] then
+							if name.Visible == false then name.Visible = true end
+						else
+							if name.Visible == true then name.Visible = false end
+						end
+					end
+					local size = options["Size"]
+					if not size then size = 14 end
+					name.Size = size
+				end)
 				if not part or not part.Parent or not Players:FindFirstChild(part.Parent.Name) then name:Remove() break end
 				if part ~= nil then
 					name.Position = WTS(part)+Vector2.new(0,options["YOffset"],0) + Vector2.new(0,currentlayer*15,0)
