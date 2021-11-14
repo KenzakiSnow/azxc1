@@ -1,7 +1,7 @@
 if _G.tushubinjected == true then return end
 _G.tushubinjected = true
 pcall(function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/bypassto"))()
-wait(6)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/tushub"))()
+wait(2)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/tushub"))()
 end)
