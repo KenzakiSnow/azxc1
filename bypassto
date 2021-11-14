@@ -84,9 +84,8 @@ pcall(function() -- Main Bypassto
 			v:Disable()
 		end
 	end
-	notification("Loading bypass")
 	disablu()
-	wait(2)
+	wait(1)
 	local st = game:GetService("Stats")
 	local oldmemtag20 = st:GetMemoryUsageMbForTag(20)
 	local oldmemtag1 = st:GetMemoryUsageMbForTag(1)
@@ -105,25 +104,23 @@ pcall(function() -- Main Bypassto
 	mt.__namecall = function(self, ...)
 		local args = {...}
 		local b = table.remove(args)
-		local a = getnamecallmethod()
+		local method = getnamecallmethod()
 		if place ~= "FakeRL" then
-			if not checkcaller() and a == "IsA" and b == "BodyVelocity" or b == "BodyGyro" or b == "VectorForce" or b == "AlignPosition" and tostring(self) ~= "Humanoid" then
+			if not checkcaller() and method == "IsA" and b == "BodyVelocity" or b == "BodyGyro" or b == "VectorForce" or b == "AlignPosition" and tostring(self) ~= "Humanoid" then
 				return nil
 			end
-			if not checkcaller() and a == "Kick" then
+			if not checkcaller() and method == "Kick" then
 				notification("Something is trying to kick u UwU")
 				return wait(9e9)
 			end
-			if not checkcaller() and tostring(self) ~= "HumanoidRootPart" and a == "FindFirstChildOfClass" then -- check if body stuff
+			if not checkcaller() and tostring(self) ~= "HumanoidRootPart" and method == "FindFirstChildOfClass" then -- check if body stuff
 				if b:lower() == "bodygyro" or b:lower() == "bodyvelocity" then -- SUPID
 					return nil
 				end
 			end
 		end
-		if a == "GetMemoryUsageMbForTag" then
+		if method == "GetMemoryUsageMbForTag" then
 			if b == 20 then
-				notification("Are u gay man")
-				Players.LocalPlayer:Kick("GetMemoryUsageMbForTag")
 				return oldmemtag20 + math.random(0.00001,0.001)
 			elseif b == 1 then
 				return oldmemtag1 + math.random(0.00001,0.001)
@@ -133,10 +130,10 @@ pcall(function() -- Main Bypassto
 				return oldmemtag5 + math.random(0.00001,0.001)
 			end
 		end
-		if _G.nofall == true and place == "FakeRL" and a == "FireServer" and tonumber(b) ~= nil and self.Parent.Name == "FallDamage" then
+		if method == "FireServer" and self.Name == "RemoteEvent" and _G.nofall == true and place == "FakeRL" and tonumber(b) ~= nil then
 			return math.abs(args[1] * (100-_G.nofallrate)/100)
 		end
-		if _G.templock == true and place == "FakeRL" and a == "FireServer" and self.Parent.Name == "AreaDetection" then
+		if method == "FireServer" and self.Parent.Name == "AreaDetection" and _G.templock == true and place == "FakeRL" then
 			return "Burning"
 		end
 		return shared.__namecall(self, ...)
@@ -171,5 +168,4 @@ pcall(function() -- Main Bypassto
 		end)
 	end
 	setreadonly(mt, true)
-	notification("Done! Now Loading Hub")
 end)
