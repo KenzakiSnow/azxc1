@@ -198,6 +198,10 @@ pcall(function()
 			section23:addToggle("Toggle", false, function(value)
 				_G.autotrinket = value
 			end)
+			local section73 = spgame:addSection("Auto pick up ingredients")
+			section73:addToggle("Toggle", false, function(value)
+				_G.autoingredient = value
+			end)
 			local section33 = spgame:addSection("Chat logger")
 			section33:addToggle("Toggle", false, function(value)
 				local gui = game:GetService("CoreGui"):FindFirstChild("Chat logger")
@@ -647,22 +651,30 @@ pcall(function()
 			frame.ChildRemoved:Connect(UpdateSize)
 			UpdateSize()
 			local Trinkets = {};
+			local ingfold
 			for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
 				if v:IsA("Folder") and v.Name == "Folder" then
-					v.ChildAdded:Connect(function(b)
-						wait()
-						for o,c in pairs(b:GetChildren()) do
-							if c:FindFirstChildOfClass("ClickDetector") then
-								table.insert(Trinkets,b)
-								break
-							end
+					for p,t in pairs(v:GetChildren()) do
+						if t:FindFirstChildOfClass("ClickDetector") then
+							ingfold = v
+							break
+						else
+							v.ChildAdded:Connect(function(b)
+								wait()
+								for o,c in pairs(b:GetChildren()) do
+									if c:FindFirstChildOfClass("ClickDetector") then
+										table.insert(Trinkets,b)
+										break
+									end
+								end
+							end)
+							v.ChildRemoved:Connect(function(b)
+								if table.find(Trinkets,b) then
+									table.remove(Trinkets,b)
+								end
+							end)
 						end
-					end)
-					v.ChildRemoved:Connect(function(b)
-						if table.find(Trinkets,b) then
-							table.remove(Trinkets,b)
-						end
-					end)
+					end
 				end
 			end
 			spawn(function()
@@ -678,6 +690,16 @@ pcall(function()
 									if c:FindFirstChildOfClass("ClickDetector").MaxActivationDistance > mag then
 										fireclickdetector(c:FindFirstChildOfClass("ClickDetector"))
 									end
+								end
+							end
+						end
+					end
+					if _G.autoingredient == true then
+						for i,v in pairs(ingfold:GetChildren()) do
+							if v.Transparency ~= 1 then
+								local mag = (v.Position - Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+								if v:FindFirstChildOfClass("ClickDetector").MaxActivationDistance > mag then
+									fireclickdetector(v:FindFirstChildOfClass("ClickDetector"))
 								end
 							end
 						end
