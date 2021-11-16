@@ -658,23 +658,26 @@ pcall(function()
 						if t:FindFirstChildOfClass("ClickDetector") then
 							ingfold = v
 							break
-						else
-							v.ChildAdded:Connect(function(b)
-								wait()
-								for o,c in pairs(b:GetChildren()) do
-									if c:FindFirstChildOfClass("ClickDetector") then
-										table.insert(Trinkets,b)
-										break
-									end
-								end
-							end)
-							v.ChildRemoved:Connect(function(b)
-								if table.find(Trinkets,b) then
-									table.remove(Trinkets,b)
-								end
-							end)
 						end
 					end
+				end
+			end
+			for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
+				if v:IsA("Folder") and v.Name == "Folder" and v ~= ingfold then
+					v.ChildAdded:Connect(function(b)
+						wait()
+						for o,c in pairs(b:GetChildren()) do
+							if c:FindFirstChildOfClass("ClickDetector") then
+								table.insert(Trinkets,b)
+								break
+							end
+						end
+					end)
+					v.ChildRemoved:Connect(function(b)
+						if table.find(Trinkets,b) then
+							table.remove(Trinkets,b)
+						end
+					end)
 				end
 			end
 			spawn(function()
