@@ -4,7 +4,11 @@ local Lighting = game:GetService("Lighting")
 local workspace = game:GetService("Workspace")
 local realws = Players.LocalPlayer.Character.Humanoid.WalkSpeed
 local realjp = Players.LocalPlayer.Character.Humanoid.JumpPower
-local place = _G.place
+local place
+if game.PlaceId == 8011200611 then
+	place = "FakeRL"
+end
+_G.place = place
 local bgname = math.random().."tushub"..math.random()
 _G.bgname = bgname
 local cam = workspace.CurrentCamera
