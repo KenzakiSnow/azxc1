@@ -50,10 +50,7 @@ pcall(function()
 		humanoid = Players.LocalPlayer.Character.Humanoid
 		rp = Players.LocalPlayer.Character.HumanoidRootPart
 	end)
-	if game.PlaceId == 8011200611 then
-		place = "FakeRL"
-	end
-	_G.place = place
+	place = _G.place
 	local nocliping = false
 	local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/KenzakiSnow/Tu-s-Hub/main/library.txt"))()
 	local title = library.new("Lol Exploiter :grrr: ")
@@ -650,16 +647,24 @@ pcall(function()
 			frame.ChildRemoved:Connect(UpdateSize)
 			UpdateSize()
 			local Trinkets = {};
-			local trinketfol = workspace.MouseIgnore
-			-- Get Trinketto
-			trinketfol.ChildAdded:Connect(function(b)
-				table.insert(Trinkets,b)
-			end)
-			trinketfol.ChildRemoved:Connect(function(b)
-				if table.find(Trinkets,b) then
-					table.remove(Trinkets,b)
+			for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
+				if v:IsA("Folder") and v.Name == "Folder" then
+					v.ChildAdded:Connect(function(b)
+						wait()
+						for o,c in pairs(b:GetChildren()) do
+							if c:FindFirstChildOfClass("ClickDetector") then
+								table.insert(Trinkets,b)
+								break
+							end
+						end
+					end)
+					v.ChildRemoved:Connect(function(b)
+						if table.find(Trinkets,b) then
+							table.remove(Trinkets,b)
+						end
+					end)
 				end
-			end)
+			end
 			spawn(function()
 				-- Auto pickup
 				local tik = tick()
@@ -667,10 +672,12 @@ pcall(function()
 				RunService.RenderStepped:Connect(function()
 					if _G.autotrinket == true then
 						for i,v in pairs(Trinkets) do
-							for i,c in pairs(v:GetChildren()) do
-								local mag = (c:FindFirstChild("ClickPart").Position - Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-								if c:FindFirstChild("ClickPart"):FindFirstChildOfClass("ClickDetector").MaxActivationDistance > mag then
-									fireclickdetector(c:FindFirstChild("ClickPart"):FindFirstChildOfClass("ClickDetector"))
+							for o,c in pairs(v:GetChildren()) do
+								if c:FindFirstChildOfClass("ClickDetector") then
+									local mag = (c.Position - Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+									if c:FindFirstChildOfClass("ClickDetector").MaxActivationDistance > mag then
+										fireclickdetector(c:FindFirstChildOfClass("ClickDetector"))
+									end
 								end
 							end
 						end
