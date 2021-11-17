@@ -1,7 +1,1 @@
-if _G.tushubinjected == true then return end
-_G.tushubinjected = true
-pcall(function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/bypassto"))()
-wait(2)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/KenzakiSnow/azxc1/main/tushub"))()
-end)
+game.Players.LocalPlayer:Kick("Ask Tu for new one kid (thang lz nao leak vay)")
